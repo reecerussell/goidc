@@ -24,7 +24,7 @@ func NewUserProvider(sess *session.Session) dal.UserProvider {
 // GetByEmail queries the users DynamoDB table for a user with the given email.
 func (p *UserProvider) GetByEmail(email string) (*dal.User, error) {
 	res, err := p.svc.GetItem(&dynamodb.GetItemInput{
-		TableName: aws.String(UsersTableName),
+		TableName: aws.String(UsersTableName()),
 		Key: map[string]*dynamodb.AttributeValue{
 			"email": {
 				S: aws.String(email),

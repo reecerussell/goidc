@@ -27,7 +27,7 @@ func (p *ClientProvider) Get(id string) (*dal.Client, error) {
 	res, err := p.svc.GetItem(&dynamodb.GetItemInput{
 		TableName: aws.String(ClientsTableName),
 		Key: map[string]*dynamodb.AttributeValue{
-			"id": {
+			"clientId": {
 				S: aws.String(id),
 			},
 		},

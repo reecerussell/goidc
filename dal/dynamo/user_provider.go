@@ -5,6 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
 
 	"github.com/reecerussell/goidc/dal"
 )
@@ -23,24 +24,30 @@ func NewUserProvider(sess *session.Session) dal.UserProvider {
 
 // GetByEmail queries the users DynamoDB table for a user with the given email.
 func (p *UserProvider) GetByEmail(email string) (*dal.User, error) {
-	res, err := p.svc.GetItem(&dynamodb.GetItemInput{
-		TableName: aws.String(UsersTableName()),
-		Key: map[string]*dynamodb.AttributeValue{
-			"email": {
-				S: aws.String(email),
-			},
-		},
+	filter := expression.Name("email").Equal(expression.Value(email))
+	projection := expression.NamesList(expression.Name("userId"), expression.Name("email"), expression.Name("passwordHash"))
+	expr, err := expression.NewBuilder().WithFilter(filter).WithProjection(projection).Build()
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := p.svc.Scan(&dynamodb.ScanInput{
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+		FilterExpression:          expr.Filter(),
+		ProjectionExpression:      expr.Projection(),
+		TableName:                 aws.String(UsersTableName()),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	if res.Item == nil {
+	if len(res.Items) < 1 {
 		return nil, dal.ErrUserNotFound
 	}
 
 	var user dal.User
-	err = dynamodbattribute.UnmarshalMap(res.Item, &user)
+	err = dynamodbattribute.UnmarshalMap(res.Items[0], &user)
 	if err != nil {
 		return nil, err
 	}

@@ -11,18 +11,17 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetClient(t *testing.T) {
+func TestGetUserByEmail(t *testing.T) {
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
 	}))
 	db := dynamodb.New(sess)
 
-	testClientId := "9238ulfdsfre"
+	testUserId := "wlerhewrlw"
 	testData := map[string]interface{}{
-		"clientId":     testClientId,
-		"name":         "TestGetClient",
-		"redirectUris": []string{"http://localhost:3000"},
-		"scopes":       []string{"test"},
+		"userId":       testUserId,
+		"email":        "test@test.go",
+		"passwordHash": "3wirwhc8o",
 	}
 
 	av, err := dynamodbattribute.MarshalMap(testData)
@@ -31,7 +30,7 @@ func TestGetClient(t *testing.T) {
 	}
 
 	_, err = db.PutItem(&dynamodb.PutItemInput{
-		TableName: aws.String(ClientsTableName()),
+		TableName: aws.String(UsersTableName()),
 		Item:      av,
 	})
 	if err != nil {
@@ -40,10 +39,10 @@ func TestGetClient(t *testing.T) {
 
 	t.Cleanup(func() {
 		_, err := db.DeleteItem(&dynamodb.DeleteItemInput{
-			TableName: aws.String(ClientsTableName()),
+			TableName: aws.String(UsersTableName()),
 			Key: map[string]*dynamodb.AttributeValue{
-				"clientId": {
-					S: aws.String(testClientId),
+				"userId": {
+					S: aws.String(testUserId),
 				},
 			},
 		})
@@ -52,13 +51,12 @@ func TestGetClient(t *testing.T) {
 		}
 	})
 
-	t.Run("Client Should Be Returned", func(t *testing.T) {
-		cp := NewClientProvider(sess)
-		client, err := cp.Get(testClientId)
+	t.Run("User Should Be Returned", func(t *testing.T) {
+		p := NewUserProvider(sess)
+		user, err := p.GetByEmail("test@test.go")
 		assert.NoError(t, err)
-		assert.Equal(t, testClientId, client.ID)
-		assert.Equal(t, testData["name"], client.Name)
-		assert.Equal(t, client.RedirectUris, testData["redirectUris"])
-		assert.Equal(t, client.Scopes, testData["scopes"])
+		assert.Equal(t, testUserId, user.ID)
+		assert.Equal(t, testData["email"], user.Email)
+		assert.Equal(t, testData["passwordHash"], user.PasswordHash)
 	})
 }

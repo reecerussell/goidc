@@ -46,3 +46,15 @@ func TestRespondError(t *testing.T) {
 	bytes, _ := json.Marshal(Error{Error: err.Error()})
 	assert.Equal(t, string(bytes), resp.Body)
 }
+
+func TestRespondMethodNotAllowed(t *testing.T) {
+	err := errors.New("error")
+
+	resp := RespondMethodNotAllowed(err)
+	assert.Equal(t, http.StatusMethodNotAllowed, resp.StatusCode)
+	assert.False(t, resp.IsBase64Encoded)
+	assert.Equal(t, "application/json; charset=utf-8", resp.Headers["Content-Type"])
+
+	bytes, _ := json.Marshal(Error{Error: err.Error()})
+	assert.Equal(t, string(bytes), resp.Body)
+}

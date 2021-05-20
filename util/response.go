@@ -18,6 +18,12 @@ func RespondBadRequest(err error) events.APIGatewayProxyResponse {
 	return Respond(http.StatusBadRequest, Error{Error: err.Error()})
 }
 
+// RespondMethodNotAllowed builds an API MethodNotAllowed response with the
+// given err as the response body.
+func RespondMethodNotAllowed(err error) events.APIGatewayProxyResponse {
+	return Respond(http.StatusMethodNotAllowed, Error{Error: err.Error()})
+}
+
 // RespondError builds an API InternalServerError response with the
 // given err as the response body.
 func RespondError(err error) events.APIGatewayProxyResponse {

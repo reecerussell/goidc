@@ -1,7 +1,7 @@
 package main
 
 import (
-	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"net/url"
@@ -16,6 +16,7 @@ import (
 	"github.com/reecerussell/goidc/dal"
 	"github.com/reecerussell/goidc/dal/dynamo"
 	"github.com/reecerussell/goidc/token"
+	"github.com/reecerussell/goidc/util"
 	"github.com/reecerussell/goidc/validator"
 )
 
@@ -50,29 +51,11 @@ type Handler struct {
 
 func (h *Handler) Handle(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	if req.HTTPMethod != http.MethodPost {
-		payload := map[string]string{"error": "method not allowed"}
-		bytes, _ := json.Marshal(payload)
-		return events.APIGatewayProxyResponse{
-			StatusCode: http.StatusMethodNotAllowed,
-			Headers: map[string]string{
-				"Content-Type": "application/json; charset=utf-8",
-			},
-			IsBase64Encoded: false,
-			Body:            string(bytes),
-		}, nil
+		return util.RespondMethodNotAllowed(errors.New("method not allowed")), nil
 	}
 
 	if req.Headers["Content-Type"] != "application/x-www-form-urlencoded" {
-		payload := map[string]string{"error": "invalid content type"}
-		bytes, _ := json.Marshal(payload)
-		return events.APIGatewayProxyResponse{
-			StatusCode: http.StatusBadRequest,
-			Headers: map[string]string{
-				"Content-Type": "application/json; charset=utf-8",
-			},
-			IsBase64Encoded: false,
-			Body:            string(bytes),
-		}, nil
+		return util.RespondBadRequest(errors.New("invalid content type")), nil
 	}
 
 	data, _ := url.ParseQuery(req.Body)
@@ -85,42 +68,15 @@ func (h *Handler) Handle(req events.APIGatewayProxyRequest) (events.APIGatewayPr
 	client, err := h.clients.Get(clientId)
 	if err != nil {
 		if err == dal.ErrClientNotFound {
-			payload := map[string]string{"error": "invalid client id"}
-			bytes, _ := json.Marshal(payload)
-			return events.APIGatewayProxyResponse{
-				StatusCode: http.StatusBadRequest,
-				Headers: map[string]string{
-					"Content-Type": "application/json; charset=utf-8",
-				},
-				IsBase64Encoded: false,
-				Body:            string(bytes),
-			}, nil
+			return util.RespondBadRequest(errors.New("invalid client id")), nil
 		}
 
-		payload := map[string]string{"error": err.Error()}
-		bytes, _ := json.Marshal(payload)
-		return events.APIGatewayProxyResponse{
-			StatusCode: http.StatusInternalServerError,
-			Headers: map[string]string{
-				"Content-Type": "application/json; charset=utf-8",
-			},
-			IsBase64Encoded: false,
-			Body:            string(bytes),
-		}, nil
+		return util.RespondError(err), nil
 	}
 
 	err = h.validator.ValidateRequest(client, clientSecret, redirectUri, grantType, scopes)
 	if err != nil {
-		payload := map[string]string{"error": err.Error()}
-		bytes, _ := json.Marshal(payload)
-		return events.APIGatewayProxyResponse{
-			StatusCode: http.StatusBadRequest,
-			Headers: map[string]string{
-				"Content-Type": "application/json; charset=utf-8",
-			},
-			IsBase64Encoded: false,
-			Body:            string(bytes),
-		}, nil
+		return util.RespondBadRequest(err), nil
 	}
 
 	claims := map[string]interface{}{
@@ -130,25 +86,8 @@ func (h *Handler) Handle(req events.APIGatewayProxyRequest) (events.APIGatewayPr
 
 	accessToken, err := h.tokens.GenerateToken(claims, 3600, "goidc")
 	if err != nil {
-		payload := map[string]string{"error": err.Error()}
-		bytes, _ := json.Marshal(payload)
-		return events.APIGatewayProxyResponse{
-			StatusCode: http.StatusInternalServerError,
-			Headers: map[string]string{
-				"Content-Type": "application/json; charset=utf-8",
-			},
-			IsBase64Encoded: false,
-			Body:            string(bytes),
-		}, nil
+		return util.RespondError(err), nil
 	}
 
-	bytes, _ := json.Marshal(accessToken)
-	return events.APIGatewayProxyResponse{
-		StatusCode: http.StatusOK,
-		Headers: map[string]string{
-			"Content-Type": "application/json; charset=utf-8",
-		},
-		IsBase64Encoded: false,
-		Body:            string(bytes),
-	}, nil
+	return util.RespondOk(accessToken), nil
 }

@@ -6,10 +6,6 @@ variable "root_resource_id" {
     type = string
 }
 
-variable "execution_role" {
-    type = string
-}
-
 variable "api_gateway_execution_arn" {
     type = string
 }

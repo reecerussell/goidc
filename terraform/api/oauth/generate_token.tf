@@ -11,11 +11,12 @@ module "generate_token" {
     http_method = "POST"
     
     api_gateway_id = var.api_gateway_id
-    execution_role = var.execution_role
     root_resource_id = aws_api_gateway_resource.token_proxy.id
     s3_bucket = var.s3_bucket
     aws_region = var.aws_region
     aws_account_id = var.aws_account_id
+
+    iam_policies = ["arn:aws:iam::aws:policy/AmazonDynamoDBReadOnlyAccess"]
 }
 
 module "generate_token_dev" {

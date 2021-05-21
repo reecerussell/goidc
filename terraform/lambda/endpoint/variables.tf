@@ -3,10 +3,6 @@ variable "name" {
   description = "The name of the lambda function."
 }
 
-variable "execution_role" {
-  type = string
-}
-
 variable "s3_bucket" {
   type        = string
   description = "The S3 Bucket with the source code."
@@ -30,4 +26,8 @@ variable "api_gateway_id" {
 
 variable "root_resource_id" {
   type = string
+}
+
+variable "iam_policies" {
+  type = list(string)
 }

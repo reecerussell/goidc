@@ -1,6 +1,6 @@
 resource "aws_lambda_function" "function" {
   function_name = var.name
-  role          = var.execution_role
+  role          = aws_iam_role.execution.arn
   s3_bucket     = var.s3_bucket
   s3_key        = "sampleapp.zip"
   handler       = "main"
@@ -11,4 +11,6 @@ resource "aws_lambda_function" "function" {
   lifecycle {
     ignore_changes = [s3_bucket, s3_key]
   }
+
+  depends_on = [aws_iam_role.execution]
 }

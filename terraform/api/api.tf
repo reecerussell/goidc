@@ -23,7 +23,6 @@ module "oauth_endpoints" {
   s3_bucket = var.s3_bucket
   aws_region = var.aws_region
   aws_account_id = var.aws_account_id
-  execution_role = aws_iam_role.execution.arn
 
   depends_on = [aws_api_gateway_resource.oauth_proxy]
 }

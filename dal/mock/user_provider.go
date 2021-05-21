@@ -5,6 +5,7 @@
 package mock
 
 import (
+	context "context"
 	gomock "github.com/golang/mock/gomock"
 	dal "github.com/reecerussell/goidc/dal"
 	reflect "reflect"
@@ -34,16 +35,16 @@ func (m *MockUserProvider) EXPECT() *MockUserProviderMockRecorder {
 }
 
 // GetByEmail mocks base method.
-func (m *MockUserProvider) GetByEmail(email string) (*dal.User, error) {
+func (m *MockUserProvider) GetByEmail(ctx context.Context, email string) (*dal.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByEmail", email)
+	ret := m.ctrl.Call(m, "GetByEmail", ctx, email)
 	ret0, _ := ret[0].(*dal.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetByEmail indicates an expected call of GetByEmail.
-func (mr *MockUserProviderMockRecorder) GetByEmail(email interface{}) *gomock.Call {
+func (mr *MockUserProviderMockRecorder) GetByEmail(ctx, email interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByEmail", reflect.TypeOf((*MockUserProvider)(nil).GetByEmail), email)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByEmail", reflect.TypeOf((*MockUserProvider)(nil).GetByEmail), ctx, email)
 }

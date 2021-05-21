@@ -1,6 +1,8 @@
 package dynamo
 
 import (
+	"context"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
@@ -23,7 +25,7 @@ func NewUserProvider(sess *session.Session) dal.UserProvider {
 }
 
 // GetByEmail queries the users DynamoDB table for a user with the given email.
-func (p *UserProvider) GetByEmail(email string) (*dal.User, error) {
+func (p *UserProvider) GetByEmail(ctx context.Context, email string) (*dal.User, error) {
 	filter := expression.Name("email").Equal(expression.Value(email))
 	projection := expression.NamesList(expression.Name("userId"), expression.Name("email"), expression.Name("passwordHash"))
 	expr, err := expression.NewBuilder().WithFilter(filter).WithProjection(projection).Build()
@@ -36,7 +38,7 @@ func (p *UserProvider) GetByEmail(email string) (*dal.User, error) {
 		ExpressionAttributeValues: expr.Values(),
 		FilterExpression:          expr.Filter(),
 		ProjectionExpression:      expr.Projection(),
-		TableName:                 aws.String(UsersTableName()),
+		TableName:                 aws.String(UsersTableName(ctx)),
 	})
 	if err != nil {
 		return nil, err

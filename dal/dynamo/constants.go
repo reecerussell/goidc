@@ -1,22 +1,15 @@
 package dynamo
 
 import (
-	"fmt"
-	"os"
+	"context"
+
+	"github.com/reecerussell/goidc"
 )
 
-func ClientsTableName() string {
-	return getVariableOrPanic("CLIENTS_TABLE_NAME")
+func ClientsTableName(ctx context.Context) string {
+	return goidc.StageVariable(ctx, "CLIENTS_TABLE_NAME")
 }
 
-func UsersTableName() string {
-	return getVariableOrPanic("USERS_TABLE_NAME")
-}
-
-func getVariableOrPanic(name string) string {
-	if v := os.Getenv(name); v != "" {
-		return v
-	}
-
-	panic(fmt.Sprintf("the environment variable '%s' has not been configured", name))
+func UsersTableName(ctx context.Context) string {
+	return goidc.StageVariable(ctx, "USERS_TABLE_NAME")
 }

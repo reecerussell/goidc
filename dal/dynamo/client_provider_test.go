@@ -1,17 +1,31 @@
 package dynamo
 
 import (
+	"context"
 	"testing"
 
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-
 	"github.com/stretchr/testify/assert"
+
+	"github.com/reecerussell/goidc"
 )
 
+func buildClientsContext() context.Context {
+	req := events.APIGatewayProxyRequest{
+		StageVariables: map[string]string{
+			"CLIENTS_TABLE_NAME": "goidc-clients-test",
+		},
+	}
+
+	return goidc.NewContext(context.Background(), &req)
+}
+
 func TestGetClient(t *testing.T) {
+	ctx := buildClientsContext()
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
 	}))
@@ -31,7 +45,7 @@ func TestGetClient(t *testing.T) {
 	}
 
 	_, err = db.PutItem(&dynamodb.PutItemInput{
-		TableName: aws.String(ClientsTableName()),
+		TableName: aws.String(ClientsTableName(ctx)),
 		Item:      av,
 	})
 	if err != nil {
@@ -40,7 +54,7 @@ func TestGetClient(t *testing.T) {
 
 	t.Cleanup(func() {
 		_, err := db.DeleteItem(&dynamodb.DeleteItemInput{
-			TableName: aws.String(ClientsTableName()),
+			TableName: aws.String(ClientsTableName(ctx)),
 			Key: map[string]*dynamodb.AttributeValue{
 				"clientId": {
 					S: aws.String(testClientId),
@@ -54,7 +68,7 @@ func TestGetClient(t *testing.T) {
 
 	t.Run("Client Should Be Returned", func(t *testing.T) {
 		cp := NewClientProvider(sess)
-		client, err := cp.Get(testClientId)
+		client, err := cp.Get(ctx, testClientId)
 		assert.NoError(t, err)
 		assert.Equal(t, testClientId, client.ID)
 		assert.Equal(t, testData["name"], client.Name)

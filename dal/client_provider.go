@@ -1,6 +1,9 @@
 package dal
 
-import "errors"
+import (
+	"context"
+	"errors"
+)
 
 // ErrClientNotFound is a common error used when a
 // client cannot be found, or does not exist.
@@ -11,5 +14,5 @@ type ClientProvider interface {
 	// Get retrieves a client from the database, with the given id.
 	// If the client cannot be found, ErrClientNotFound will be returned
 	// as the error.
-	Get(id string) (*Client, error)
+	Get(ctx context.Context, id string) (*Client, error)
 }

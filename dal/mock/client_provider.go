@@ -5,6 +5,7 @@
 package mock
 
 import (
+	context "context"
 	gomock "github.com/golang/mock/gomock"
 	dal "github.com/reecerussell/goidc/dal"
 	reflect "reflect"
@@ -34,16 +35,16 @@ func (m *MockClientProvider) EXPECT() *MockClientProviderMockRecorder {
 }
 
 // Get mocks base method.
-func (m *MockClientProvider) Get(id string) (*dal.Client, error) {
+func (m *MockClientProvider) Get(ctx context.Context, id string) (*dal.Client, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Get", id)
+	ret := m.ctrl.Call(m, "Get", ctx, id)
 	ret0, _ := ret[0].(*dal.Client)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Get indicates an expected call of Get.
-func (mr *MockClientProviderMockRecorder) Get(id interface{}) *gomock.Call {
+func (mr *MockClientProviderMockRecorder) Get(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockClientProvider)(nil).Get), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockClientProvider)(nil).Get), ctx, id)
 }

@@ -1,6 +1,8 @@
 package dynamo
 
 import (
+	"context"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
@@ -23,9 +25,9 @@ func NewClientProvider(sess *session.Session) dal.ClientProvider {
 }
 
 // Get queries the clients table in DynamoDB for a client with the given id.
-func (p *ClientProvider) Get(id string) (*dal.Client, error) {
+func (p *ClientProvider) Get(ctx context.Context, id string) (*dal.Client, error) {
 	res, err := p.svc.GetItem(&dynamodb.GetItemInput{
-		TableName: aws.String(ClientsTableName()),
+		TableName: aws.String(ClientsTableName(ctx)),
 		Key: map[string]*dynamodb.AttributeValue{
 			"clientId": {
 				S: aws.String(id),

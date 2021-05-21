@@ -9,16 +9,15 @@ import (
 
 // Validation errors.
 var (
-	ErrInvalidSecret      = errors.New("invalid client secret")
-	ErrInvalidRedirectUrl = errors.New("invalid redirect uri")
-	ErrInvalidGrantType   = errors.New("invalid grant type")
-	ErrInvalidScope       = errors.New("invalid scope")
+	ErrInvalidSecret    = errors.New("invalid client secret")
+	ErrInvalidGrantType = errors.New("invalid grant type")
+	ErrInvalidScope     = errors.New("invalid scope")
 )
 
 // ClientValidator is used to centralize client validation logic, for
 // validating incoming requests.
 type ClientValidator interface {
-	ValidateRequest(c *dal.Client, secret, redirectUri, grantType string, scopes []string) error
+	ValidateTokenRequest(c *dal.Client, secret, grantType string, scopes []string) error
 }
 
 // clientValidator is an implementation of ClientValidator.
@@ -29,13 +28,8 @@ func NewClientValidator() ClientValidator {
 	return &clientValidator{}
 }
 
-func (*clientValidator) ValidateRequest(c *dal.Client, secret, redirectUri, grantType string, scopes []string) error {
-	err := validateRedirectUri(c.RedirectUris, redirectUri)
-	if err != nil {
-		return err
-	}
-
-	err = validateSecret(c.Secrets, secret)
+func (*clientValidator) ValidateTokenRequest(c *dal.Client, secret, grantType string, scopes []string) error {
+	err := validateSecret(c.Secrets, secret)
 	if err != nil {
 		return err
 	}
@@ -61,16 +55,6 @@ func validateSecret(allowedSecrets []string, secret string) error {
 	}
 
 	return ErrInvalidSecret
-}
-
-func validateRedirectUri(allowedUris []string, redirectUri string) error {
-	for _, uri := range allowedUris {
-		if uri == redirectUri {
-			return nil
-		}
-	}
-
-	return ErrInvalidRedirectUrl
 }
 
 func validateGrantTypes(allowedTypes []string, grantType string) error {

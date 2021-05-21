@@ -9,7 +9,7 @@ import (
 	"github.com/reecerussell/goidc/util"
 )
 
-func TestClientValidator_ValidateRequest_ReturnsNoError(t *testing.T) {
+func TestClientValidator_ValidateTokenRequest_ReturnsNoError(t *testing.T) {
 	testClient := &dal.Client{
 		RedirectUris: []string{"http://localhost:8080"},
 		GrantTypes:   []string{"client_credentials"},
@@ -18,11 +18,11 @@ func TestClientValidator_ValidateRequest_ReturnsNoError(t *testing.T) {
 	}
 
 	cv := NewClientValidator()
-	err := cv.ValidateRequest(testClient, "test", "http://localhost:8080", "client_credentials", []string{"openid"})
+	err := cv.ValidateTokenRequest(testClient, "test", "client_credentials", []string{"openid"})
 	assert.NoError(t, err)
 }
 
-func TestClientValidator_ValidateRequest_ReturnsError(t *testing.T) {
+func TestClientValidator_ValidateTokenRequest_ReturnsError(t *testing.T) {
 	testClient := &dal.Client{
 		RedirectUris: []string{"http://localhost:8080"},
 		GrantTypes:   []string{"client_credentials"},
@@ -32,23 +32,18 @@ func TestClientValidator_ValidateRequest_ReturnsError(t *testing.T) {
 
 	cv := NewClientValidator()
 
-	t.Run("Given Invalid RedirectUri", func(t *testing.T) {
-		err := cv.ValidateRequest(testClient, "test", "http://google.com", "client_credentials", []string{"openid"})
-		assert.Equal(t, ErrInvalidRedirectUrl, err)
-	})
-
 	t.Run("Given Invalid Secret", func(t *testing.T) {
-		err := cv.ValidateRequest(testClient, "hello", "http://localhost:8080", "client_credentials", []string{"openid"})
+		err := cv.ValidateTokenRequest(testClient, "hello", "client_credentials", []string{"openid"})
 		assert.Equal(t, ErrInvalidSecret, err)
 	})
 
 	t.Run("Given Invalid GrantType", func(t *testing.T) {
-		err := cv.ValidateRequest(testClient, "test", "http://localhost:8080", "code", []string{"openid"})
+		err := cv.ValidateTokenRequest(testClient, "test", "code", []string{"openid"})
 		assert.Equal(t, ErrInvalidGrantType, err)
 	})
 
 	t.Run("Given Invalid Scope", func(t *testing.T) {
-		err := cv.ValidateRequest(testClient, "test", "http://localhost:8080", "client_credentials", []string{"openid", "test"})
+		err := cv.ValidateTokenRequest(testClient, "test", "client_credentials", []string{"openid", "test"})
 		assert.NotNil(t, err)
 	})
 }

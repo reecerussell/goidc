@@ -33,16 +33,16 @@ func (m *MockClientValidator) EXPECT() *MockClientValidatorMockRecorder {
 	return m.recorder
 }
 
-// ValidateRequest mocks base method.
-func (m *MockClientValidator) ValidateRequest(c *dal.Client, secret, redirectUri, grantType string, scopes []string) error {
+// ValidateTokenRequest mocks base method.
+func (m *MockClientValidator) ValidateTokenRequest(c *dal.Client, secret, grantType string, scopes []string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ValidateRequest", c, secret, redirectUri, grantType, scopes)
+	ret := m.ctrl.Call(m, "ValidateTokenRequest", c, secret, grantType, scopes)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// ValidateRequest indicates an expected call of ValidateRequest.
-func (mr *MockClientValidatorMockRecorder) ValidateRequest(c, secret, redirectUri, grantType, scopes interface{}) *gomock.Call {
+// ValidateTokenRequest indicates an expected call of ValidateTokenRequest.
+func (mr *MockClientValidatorMockRecorder) ValidateTokenRequest(c, secret, grantType, scopes interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidateRequest", reflect.TypeOf((*MockClientValidator)(nil).ValidateRequest), c, secret, redirectUri, grantType, scopes)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidateTokenRequest", reflect.TypeOf((*MockClientValidator)(nil).ValidateTokenRequest), c, secret, grantType, scopes)
 }

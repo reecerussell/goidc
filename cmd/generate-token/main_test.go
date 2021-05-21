@@ -23,15 +23,13 @@ func TestHandler(t *testing.T) {
 	testClientId := "3247023"
 	testClientSecret := "2934uldnf"
 	testGrantType := "code"
-	testRedirectUri := "http://test.io"
 	testScopes := "openid"
 
 	testClient := &dal.Client{
-		ID:           testClientId,
-		RedirectUris: []string{"http://test.io"},
-		Scopes:       []string{"openid"},
-		Secrets:      []string{"my secret"},
-		GrantTypes:   []string{"code"},
+		ID:         testClientId,
+		Scopes:     []string{"openid"},
+		Secrets:    []string{"my secret"},
+		GrantTypes: []string{"code"},
 	}
 	testToken := &token.Token{
 		AccessToken: "my.jwt.token",
@@ -46,7 +44,7 @@ func TestHandler(t *testing.T) {
 	mockProvider.EXPECT().Get(gomock.Any(), testClientId).Return(testClient, nil)
 
 	mockValidator := valMock.NewMockClientValidator(ctrl)
-	mockValidator.EXPECT().ValidateRequest(testClient, testClientSecret, testRedirectUri, testGrantType, gomock.Any()).Return(nil)
+	mockValidator.EXPECT().ValidateTokenRequest(testClient, testClientSecret, testGrantType, gomock.Any()).Return(nil)
 
 	mockTokenService := tokenMock.NewMockService(ctrl)
 	mockTokenService.EXPECT().GenerateToken(gomock.Any(), gomock.Any(), gomock.Any()).Return(testToken, nil)
@@ -61,7 +59,6 @@ func TestHandler(t *testing.T) {
 		"client_id":     {testClientId},
 		"client_secret": {testClientSecret},
 		"grant_type":    {testGrantType},
-		"redirect_uri":  {testRedirectUri},
 		"scope":         {testScopes},
 	}
 
@@ -85,7 +82,6 @@ func TestHandler_GivenInvalidHTTPMethod_ReturnsMethodNotSupported(t *testing.T) 
 	testClientId := "3247023"
 	testClientSecret := "2934uldnf"
 	testGrantType := "code"
-	testRedirectUri := "http://test.io"
 	testScopes := "openid"
 
 	ctrl := gomock.NewController(t)
@@ -105,7 +101,6 @@ func TestHandler_GivenInvalidHTTPMethod_ReturnsMethodNotSupported(t *testing.T) 
 		"client_id":     {testClientId},
 		"client_secret": {testClientSecret},
 		"grant_type":    {testGrantType},
-		"redirect_uri":  {testRedirectUri},
 		"scope":         {testScopes},
 	}
 
@@ -129,7 +124,6 @@ func TestHandler_GivenInvalidContentType_ReturnsBadRequest(t *testing.T) {
 	testClientId := "3247023"
 	testClientSecret := "2934uldnf"
 	testGrantType := "code"
-	testRedirectUri := "http://test.io"
 	testScopes := "openid"
 
 	ctrl := gomock.NewController(t)
@@ -149,7 +143,6 @@ func TestHandler_GivenInvalidContentType_ReturnsBadRequest(t *testing.T) {
 		"client_id":     {testClientId},
 		"client_secret": {testClientSecret},
 		"grant_type":    {testGrantType},
-		"redirect_uri":  {testRedirectUri},
 		"scope":         {testScopes},
 	}
 
@@ -173,7 +166,6 @@ func TestHandler_GivenInvalidClientId_ReturnsBadRequest(t *testing.T) {
 	testClientId := "3247023"
 	testClientSecret := "2934uldnf"
 	testGrantType := "code"
-	testRedirectUri := "http://test.io"
 	testScopes := "openid"
 
 	ctrl := gomock.NewController(t)
@@ -195,7 +187,6 @@ func TestHandler_GivenInvalidClientId_ReturnsBadRequest(t *testing.T) {
 		"client_id":     {testClientId},
 		"client_secret": {testClientSecret},
 		"grant_type":    {testGrantType},
-		"redirect_uri":  {testRedirectUri},
 		"scope":         {testScopes},
 	}
 
@@ -219,7 +210,6 @@ func TestHandler_WhereClientProviderFails_ReturnsInternalServerError(t *testing.
 	testClientId := "3247023"
 	testClientSecret := "2934uldnf"
 	testGrantType := "code"
-	testRedirectUri := "http://test.io"
 	testScopes := "openid"
 
 	testError := errors.New("an error occured")
@@ -243,7 +233,6 @@ func TestHandler_WhereClientProviderFails_ReturnsInternalServerError(t *testing.
 		"client_id":     {testClientId},
 		"client_secret": {testClientSecret},
 		"grant_type":    {testGrantType},
-		"redirect_uri":  {testRedirectUri},
 		"scope":         {testScopes},
 	}
 
@@ -267,15 +256,13 @@ func TestHandler_GivenInvalidClient_ReturnsBadRequest(t *testing.T) {
 	testClientId := "3247023"
 	testClientSecret := "2934uldnf"
 	testGrantType := "code"
-	testRedirectUri := "http://test.io"
 	testScopes := "openid"
 
 	testClient := &dal.Client{
-		ID:           testClientId,
-		RedirectUris: []string{"http://test.io"},
-		Scopes:       []string{"openid"},
-		Secrets:      []string{"my secret"},
-		GrantTypes:   []string{"code"},
+		ID:         testClientId,
+		Scopes:     []string{"openid"},
+		Secrets:    []string{"my secret"},
+		GrantTypes: []string{"code"},
 	}
 	testError := errors.New("invalid client")
 
@@ -286,7 +273,7 @@ func TestHandler_GivenInvalidClient_ReturnsBadRequest(t *testing.T) {
 	mockProvider.EXPECT().Get(gomock.Any(), testClientId).Return(testClient, nil)
 
 	mockValidator := valMock.NewMockClientValidator(ctrl)
-	mockValidator.EXPECT().ValidateRequest(testClient, testClientSecret, testRedirectUri, testGrantType, gomock.Any()).Return(testError)
+	mockValidator.EXPECT().ValidateTokenRequest(testClient, testClientSecret, testGrantType, gomock.Any()).Return(testError)
 
 	mockTokenService := tokenMock.NewMockService(ctrl)
 
@@ -300,7 +287,6 @@ func TestHandler_GivenInvalidClient_ReturnsBadRequest(t *testing.T) {
 		"client_id":     {testClientId},
 		"client_secret": {testClientSecret},
 		"grant_type":    {testGrantType},
-		"redirect_uri":  {testRedirectUri},
 		"scope":         {testScopes},
 	}
 
@@ -324,15 +310,13 @@ func TestHandler_GivenTokenGenerationFails_ReturnsInternalServerError(t *testing
 	testClientId := "3247023"
 	testClientSecret := "2934uldnf"
 	testGrantType := "code"
-	testRedirectUri := "http://test.io"
 	testScopes := "openid"
 
 	testClient := &dal.Client{
-		ID:           testClientId,
-		RedirectUris: []string{"http://test.io"},
-		Scopes:       []string{"openid"},
-		Secrets:      []string{"my secret"},
-		GrantTypes:   []string{"code"},
+		ID:         testClientId,
+		Scopes:     []string{"openid"},
+		Secrets:    []string{"my secret"},
+		GrantTypes: []string{"code"},
 	}
 	testError := errors.New("invalid client")
 
@@ -343,7 +327,7 @@ func TestHandler_GivenTokenGenerationFails_ReturnsInternalServerError(t *testing
 	mockProvider.EXPECT().Get(gomock.Any(), testClientId).Return(testClient, nil)
 
 	mockValidator := valMock.NewMockClientValidator(ctrl)
-	mockValidator.EXPECT().ValidateRequest(testClient, testClientSecret, testRedirectUri, testGrantType, gomock.Any()).Return(nil)
+	mockValidator.EXPECT().ValidateTokenRequest(testClient, testClientSecret, testGrantType, gomock.Any()).Return(nil)
 
 	mockTokenService := tokenMock.NewMockService(ctrl)
 	mockTokenService.EXPECT().GenerateToken(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil, testError)
@@ -358,7 +342,6 @@ func TestHandler_GivenTokenGenerationFails_ReturnsInternalServerError(t *testing
 		"client_id":     {testClientId},
 		"client_secret": {testClientSecret},
 		"grant_type":    {testGrantType},
-		"redirect_uri":  {testRedirectUri},
 		"scope":         {testScopes},
 	}
 

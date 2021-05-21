@@ -64,8 +64,7 @@ func (h *Handler) Handle(ctx context.Context, req events.APIGatewayProxyRequest)
 	clientId := data.Get("client_id")
 	clientSecret := data.Get("client_secret")
 	grantType := data.Get("grant_type")
-	redirectUri := data.Get("redirect_uri")
-	scopes := strings.Split(" ", data.Get("scope"))
+	scopes := strings.Split(data.Get("scope"), " ")
 
 	ctx = goidc.NewContext(ctx, &req)
 	client, err := h.clients.Get(ctx, clientId)
@@ -77,7 +76,7 @@ func (h *Handler) Handle(ctx context.Context, req events.APIGatewayProxyRequest)
 		return util.RespondError(err), nil
 	}
 
-	err = h.validator.ValidateRequest(client, clientSecret, redirectUri, grantType, scopes)
+	err = h.validator.ValidateTokenRequest(client, clientSecret, grantType, scopes)
 	if err != nil {
 		return util.RespondBadRequest(err), nil
 	}

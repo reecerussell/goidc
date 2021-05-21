@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -42,7 +43,7 @@ func TestHandler(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockProvider := dalMock.NewMockClientProvider(ctrl)
-	mockProvider.EXPECT().Get(testClientId).Return(testClient, nil)
+	mockProvider.EXPECT().Get(gomock.Any(), testClientId).Return(testClient, nil)
 
 	mockValidator := valMock.NewMockClientValidator(ctrl)
 	mockValidator.EXPECT().ValidateRequest(testClient, testClientSecret, testRedirectUri, testGrantType, gomock.Any()).Return(nil)
@@ -64,7 +65,7 @@ func TestHandler(t *testing.T) {
 		"scope":         {testScopes},
 	}
 
-	resp, err := h.Handle(events.APIGatewayProxyRequest{
+	resp, err := h.Handle(context.Background(), events.APIGatewayProxyRequest{
 		HTTPMethod: "POST",
 		Headers: map[string]string{
 			"Content-Type": "application/x-www-form-urlencoded",
@@ -108,7 +109,7 @@ func TestHandler_GivenInvalidHTTPMethod_ReturnsMethodNotSupported(t *testing.T) 
 		"scope":         {testScopes},
 	}
 
-	resp, err := h.Handle(events.APIGatewayProxyRequest{
+	resp, err := h.Handle(context.Background(), events.APIGatewayProxyRequest{
 		HTTPMethod: "GET",
 		Headers: map[string]string{
 			"Content-Type": "application/x-www-form-urlencoded",
@@ -152,7 +153,7 @@ func TestHandler_GivenInvalidContentType_ReturnsBadRequest(t *testing.T) {
 		"scope":         {testScopes},
 	}
 
-	resp, err := h.Handle(events.APIGatewayProxyRequest{
+	resp, err := h.Handle(context.Background(), events.APIGatewayProxyRequest{
 		HTTPMethod: "POST",
 		Headers: map[string]string{
 			"Content-Type": "application/json",
@@ -179,7 +180,7 @@ func TestHandler_GivenInvalidClientId_ReturnsBadRequest(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockProvider := dalMock.NewMockClientProvider(ctrl)
-	mockProvider.EXPECT().Get(testClientId).Return(nil, dal.ErrClientNotFound)
+	mockProvider.EXPECT().Get(gomock.Any(), testClientId).Return(nil, dal.ErrClientNotFound)
 
 	mockValidator := valMock.NewMockClientValidator(ctrl)
 	mockTokenService := tokenMock.NewMockService(ctrl)
@@ -198,7 +199,7 @@ func TestHandler_GivenInvalidClientId_ReturnsBadRequest(t *testing.T) {
 		"scope":         {testScopes},
 	}
 
-	resp, err := h.Handle(events.APIGatewayProxyRequest{
+	resp, err := h.Handle(context.Background(), events.APIGatewayProxyRequest{
 		HTTPMethod: "POST",
 		Headers: map[string]string{
 			"Content-Type": "application/x-www-form-urlencoded",
@@ -227,7 +228,7 @@ func TestHandler_WhereClientProviderFails_ReturnsInternalServerError(t *testing.
 	defer ctrl.Finish()
 
 	mockProvider := dalMock.NewMockClientProvider(ctrl)
-	mockProvider.EXPECT().Get(testClientId).Return(nil, testError)
+	mockProvider.EXPECT().Get(gomock.Any(), testClientId).Return(nil, testError)
 
 	mockValidator := valMock.NewMockClientValidator(ctrl)
 	mockTokenService := tokenMock.NewMockService(ctrl)
@@ -246,7 +247,7 @@ func TestHandler_WhereClientProviderFails_ReturnsInternalServerError(t *testing.
 		"scope":         {testScopes},
 	}
 
-	resp, err := h.Handle(events.APIGatewayProxyRequest{
+	resp, err := h.Handle(context.Background(), events.APIGatewayProxyRequest{
 		HTTPMethod: "POST",
 		Headers: map[string]string{
 			"Content-Type": "application/x-www-form-urlencoded",
@@ -282,7 +283,7 @@ func TestHandler_GivenInvalidClient_ReturnsBadRequest(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockProvider := dalMock.NewMockClientProvider(ctrl)
-	mockProvider.EXPECT().Get(testClientId).Return(testClient, nil)
+	mockProvider.EXPECT().Get(gomock.Any(), testClientId).Return(testClient, nil)
 
 	mockValidator := valMock.NewMockClientValidator(ctrl)
 	mockValidator.EXPECT().ValidateRequest(testClient, testClientSecret, testRedirectUri, testGrantType, gomock.Any()).Return(testError)
@@ -303,7 +304,7 @@ func TestHandler_GivenInvalidClient_ReturnsBadRequest(t *testing.T) {
 		"scope":         {testScopes},
 	}
 
-	resp, err := h.Handle(events.APIGatewayProxyRequest{
+	resp, err := h.Handle(context.Background(), events.APIGatewayProxyRequest{
 		HTTPMethod: "POST",
 		Headers: map[string]string{
 			"Content-Type": "application/x-www-form-urlencoded",
@@ -339,7 +340,7 @@ func TestHandler_GivenTokenGenerationFails_ReturnsInternalServerError(t *testing
 	defer ctrl.Finish()
 
 	mockProvider := dalMock.NewMockClientProvider(ctrl)
-	mockProvider.EXPECT().Get(testClientId).Return(testClient, nil)
+	mockProvider.EXPECT().Get(gomock.Any(), testClientId).Return(testClient, nil)
 
 	mockValidator := valMock.NewMockClientValidator(ctrl)
 	mockValidator.EXPECT().ValidateRequest(testClient, testClientSecret, testRedirectUri, testGrantType, gomock.Any()).Return(nil)
@@ -361,7 +362,7 @@ func TestHandler_GivenTokenGenerationFails_ReturnsInternalServerError(t *testing
 		"scope":         {testScopes},
 	}
 
-	resp, err := h.Handle(events.APIGatewayProxyRequest{
+	resp, err := h.Handle(context.Background(), events.APIGatewayProxyRequest{
 		HTTPMethod: "POST",
 		Headers: map[string]string{
 			"Content-Type": "application/x-www-form-urlencoded",

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"log"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/reecerussell/goidc"
 	"github.com/reecerussell/gojwt/kms"
 
 	"github.com/reecerussell/goidc/dal"
@@ -49,7 +51,7 @@ type Handler struct {
 	validator validator.ClientValidator
 }
 
-func (h *Handler) Handle(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func (h *Handler) Handle(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	if req.HTTPMethod != http.MethodPost {
 		return util.RespondMethodNotAllowed(errors.New("method not allowed")), nil
 	}
@@ -65,7 +67,8 @@ func (h *Handler) Handle(req events.APIGatewayProxyRequest) (events.APIGatewayPr
 	redirectUri := data.Get("redirect_uri")
 	scopes := strings.Split(" ", data.Get("scope"))
 
-	client, err := h.clients.Get(clientId)
+	ctx = goidc.NewContext(ctx, &req)
+	client, err := h.clients.Get(ctx, clientId)
 	if err != nil {
 		if err == dal.ErrClientNotFound {
 			return util.RespondBadRequest(errors.New("invalid client id")), nil

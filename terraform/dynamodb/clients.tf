@@ -10,11 +10,6 @@ resource "aws_dynamodb_table" "clients-table" {
     type = "S"
   }
 
-  ttl {
-    attribute_name = "TimeToExist"
-    enabled        = false
-  }
-
   global_secondary_index {
     name            = "clientId"
     hash_key        = "clientId"

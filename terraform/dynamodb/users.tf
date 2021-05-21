@@ -10,11 +10,6 @@ resource "aws_dynamodb_table" "users-table" {
     type = "S"
   }
 
-  ttl {
-    attribute_name = "TimeToExist"
-    enabled        = false
-  }
-
   global_secondary_index {
     name            = "userId"
     hash_key        = "userId"

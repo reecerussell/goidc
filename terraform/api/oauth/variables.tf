@@ -1,13 +1,13 @@
 variable "api_gateway_id" {
-    type = string
+  type = string
 }
 
 variable "root_resource_id" {
-    type = string
+  type = string
 }
 
 variable "api_gateway_execution_arn" {
-    type = string
+  type = string
 }
 
 variable "s3_bucket" {

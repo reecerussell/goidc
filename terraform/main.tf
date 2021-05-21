@@ -7,8 +7,8 @@ provider "aws" {
 module "api" {
   source = "./api"
 
-  name = "goidc"
-  s3_bucket = var.S3_SOURCE_BUCKET
-  aws_region = var.AWS_REGION
+  name           = "goidc"
+  s3_bucket      = var.S3_SOURCE_BUCKET
+  aws_region     = var.AWS_REGION
   aws_account_id = var.AWS_ACCOUNT_ID
 }

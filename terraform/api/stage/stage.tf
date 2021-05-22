@@ -7,6 +7,7 @@ resource "aws_api_gateway_stage" "stage" {
     ENVIRONMENT        = var.name
     CLIENTS_TABLE_NAME = "goidc-clients-${var.name}"
     USERS_TABLE_NAME   = "goidc-users-${var.name}"
+    JWT_KEY_ID = aws_kms_key.jwt.key_id
   }
 
   lifecycle {

@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-sdk-go/awstesting/mock"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
@@ -44,12 +45,13 @@ func TestHandler(t *testing.T) {
 	mockProvider.EXPECT().Get(gomock.Any(), testClientId).Return(testClient, nil)
 
 	mockValidator := valMock.NewMockClientValidator(ctrl)
-	mockValidator.EXPECT().ValidateTokenRequest(testClient, testClientSecret, testGrantType, gomock.Any()).Return(nil)
+	mockValidator.EXPECT().ValidateTokenRequest(testClient, testClientSecret, testGrantType, []string{testScopes}).Return(nil)
 
 	mockTokenService := tokenMock.NewMockService(ctrl)
-	mockTokenService.EXPECT().GenerateToken(gomock.Any(), gomock.Any(), gomock.Any()).Return(testToken, nil)
+	mockTokenService.EXPECT().GenerateToken(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(testToken, nil)
 
 	h := &Handler{
+		sess:      mock.Session,
 		tokens:    mockTokenService,
 		clients:   mockProvider,
 		validator: mockValidator,
@@ -68,6 +70,9 @@ func TestHandler(t *testing.T) {
 			"Content-Type": "application/x-www-form-urlencoded",
 		},
 		Body: testBody.Encode(),
+		StageVariables: map[string]string{
+			"JWT_KEY_ID": "test key id",
+		},
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
@@ -92,6 +97,7 @@ func TestHandler_GivenInvalidHTTPMethod_ReturnsMethodNotSupported(t *testing.T) 
 	mockTokenService := tokenMock.NewMockService(ctrl)
 
 	h := &Handler{
+		sess:      mock.Session,
 		tokens:    mockTokenService,
 		clients:   mockProvider,
 		validator: mockValidator,
@@ -134,6 +140,7 @@ func TestHandler_GivenInvalidContentType_ReturnsBadRequest(t *testing.T) {
 	mockTokenService := tokenMock.NewMockService(ctrl)
 
 	h := &Handler{
+		sess:      mock.Session,
 		tokens:    mockTokenService,
 		clients:   mockProvider,
 		validator: mockValidator,
@@ -178,6 +185,7 @@ func TestHandler_GivenInvalidClientId_ReturnsBadRequest(t *testing.T) {
 	mockTokenService := tokenMock.NewMockService(ctrl)
 
 	h := &Handler{
+		sess:      mock.Session,
 		tokens:    mockTokenService,
 		clients:   mockProvider,
 		validator: mockValidator,
@@ -224,6 +232,7 @@ func TestHandler_WhereClientProviderFails_ReturnsInternalServerError(t *testing.
 	mockTokenService := tokenMock.NewMockService(ctrl)
 
 	h := &Handler{
+		sess:      mock.Session,
 		tokens:    mockTokenService,
 		clients:   mockProvider,
 		validator: mockValidator,
@@ -278,6 +287,7 @@ func TestHandler_GivenInvalidClient_ReturnsBadRequest(t *testing.T) {
 	mockTokenService := tokenMock.NewMockService(ctrl)
 
 	h := &Handler{
+		sess:      mock.Session,
 		tokens:    mockTokenService,
 		clients:   mockProvider,
 		validator: mockValidator,
@@ -330,9 +340,10 @@ func TestHandler_GivenTokenGenerationFails_ReturnsInternalServerError(t *testing
 	mockValidator.EXPECT().ValidateTokenRequest(testClient, testClientSecret, testGrantType, gomock.Any()).Return(nil)
 
 	mockTokenService := tokenMock.NewMockService(ctrl)
-	mockTokenService.EXPECT().GenerateToken(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil, testError)
+	mockTokenService.EXPECT().GenerateToken(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil, testError)
 
 	h := &Handler{
+		sess:      mock.Session,
 		tokens:    mockTokenService,
 		clients:   mockProvider,
 		validator: mockValidator,
@@ -351,6 +362,9 @@ func TestHandler_GivenTokenGenerationFails_ReturnsInternalServerError(t *testing
 			"Content-Type": "application/x-www-form-urlencoded",
 		},
 		Body: testBody.Encode(),
+		StageVariables: map[string]string{
+			"JWT_KEY_ID": "test key id",
+		},
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusInternalServerError, resp.StatusCode)

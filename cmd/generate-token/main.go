@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"os"
 	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -22,18 +21,11 @@ import (
 	"github.com/reecerussell/goidc/validator"
 )
 
-const keyIdVar = "TOKEN_KEY_ID"
-
 func main() {
 	log.Println("Starting...")
 
-	keyId := os.Getenv(keyIdVar)
-	log.Printf("Key Id: %s\n", keyId)
-
 	sess := session.Must(session.NewSession())
-	alg, _ := kms.New(sess, keyId, kms.RSA_PKCS1_S256)
-
-	tokenService := token.New(alg, "goidc")
+	tokenService := token.New("goidc")
 	clientProvider := dynamo.NewClientProvider(sess)
 
 	hdlr := &Handler{
@@ -46,6 +38,7 @@ func main() {
 }
 
 type Handler struct {
+	sess      *session.Session
 	tokens    token.Service
 	clients   dal.ClientProvider
 	validator validator.ClientValidator
@@ -86,7 +79,8 @@ func (h *Handler) Handle(ctx context.Context, req events.APIGatewayProxyRequest)
 		"scopes": scopes,
 	}
 
-	accessToken, err := h.tokens.GenerateToken(claims, 3600, "goidc")
+	alg, _ := kms.New(h.sess, goidc.StageVariable(ctx, "JWT_KEY_ID"), kms.RSA_PKCS1_S256)
+	accessToken, err := h.tokens.GenerateToken(alg, claims, 3600, "goidc")
 	if err != nil {
 		return util.RespondError(err), nil
 	}

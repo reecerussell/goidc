@@ -29,6 +29,7 @@ func main() {
 	clientProvider := dynamo.NewClientProvider(sess)
 
 	hdlr := &Handler{
+		sess:      sess,
 		tokens:    tokenService,
 		clients:   clientProvider,
 		validator: validator.NewClientValidator(),

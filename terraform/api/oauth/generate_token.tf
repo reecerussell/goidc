@@ -45,3 +45,32 @@ module "generate_token_prod" {
   function_arn              = module.generate_token.function_arn
   function_name             = module.generate_token.function_name
 }
+
+resource "aws_iam_policy" "kms" {
+  name        = "generate-token-kms"
+  path        = "/"
+  description = "IAM policy for kms for generate-token"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+          "kms:GetPublicKey",
+          "kms:Sign"
+      ],
+      "Resource": "arn:aws:kms:${var.aws_region}:${var.aws_account_id}:key/*"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "kms_attachment" {
+  role       = module.generate_token.execution_role
+  policy_arn = aws_iam_policy.kms.arn
+
+  depends_on = [aws_iam_policy.kms, module.generate_token]
+}

@@ -7,6 +7,7 @@ package mock
 import (
 	gomock "github.com/golang/mock/gomock"
 	token "github.com/reecerussell/goidc/token"
+	gojwt "github.com/reecerussell/gojwt"
 	reflect "reflect"
 )
 
@@ -34,16 +35,16 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 }
 
 // GenerateToken mocks base method.
-func (m *MockService) GenerateToken(claims map[string]interface{}, expirySeconds int64, audience string) (*token.Token, error) {
+func (m *MockService) GenerateToken(alg gojwt.Algorithm, claims map[string]interface{}, expirySeconds int64, audience string) (*token.Token, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GenerateToken", claims, expirySeconds, audience)
+	ret := m.ctrl.Call(m, "GenerateToken", alg, claims, expirySeconds, audience)
 	ret0, _ := ret[0].(*token.Token)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GenerateToken indicates an expected call of GenerateToken.
-func (mr *MockServiceMockRecorder) GenerateToken(claims, expirySeconds, audience interface{}) *gomock.Call {
+func (mr *MockServiceMockRecorder) GenerateToken(alg, claims, expirySeconds, audience interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateToken", reflect.TypeOf((*MockService)(nil).GenerateToken), claims, expirySeconds, audience)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateToken", reflect.TypeOf((*MockService)(nil).GenerateToken), alg, claims, expirySeconds, audience)
 }

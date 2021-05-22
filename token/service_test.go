@@ -35,8 +35,8 @@ func TestGenerateToken(t *testing.T) {
 	testAudience := "testing"
 	testExpirySeconds := int64(3600)
 
-	svc := New(mockAlg, testIssuer)
-	token, err := svc.GenerateToken(testClaims, testExpirySeconds, testAudience)
+	svc := New(testIssuer)
+	token, err := svc.GenerateToken(mockAlg, testClaims, testExpirySeconds, testAudience)
 	assert.NoError(t, err)
 	assert.Equal(t, "Bearer", token.TokenType)
 	assert.Equal(t, testExpirySeconds, token.Expires)
@@ -71,8 +71,8 @@ func TestGenerateToken_WhereTheAlgorithmFails_ReturnsError(t *testing.T) {
 	mockAlg.EXPECT().Size().Return(256, nil)
 	mockAlg.EXPECT().Sign(gomock.Any()).Return(nil, testError)
 
-	svc := New(mockAlg, testIssuer)
-	token, err := svc.GenerateToken(testClaims, testExpirySeconds, testAudience)
+	svc := New(testIssuer)
+	token, err := svc.GenerateToken(mockAlg, testClaims, testExpirySeconds, testAudience)
 	assert.Nil(t, token)
 	assert.Equal(t, testError, err)
 }

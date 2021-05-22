@@ -11,26 +11,24 @@ import (
 // Service is a high level interface used to generate and
 // verify JSON-Web Tokens.
 type Service interface {
-	GenerateToken(claims map[string]interface{}, expirySeconds int64, audience string) (*Token, error)
+	GenerateToken(alg gojwt.Algorithm, claims map[string]interface{}, expirySeconds int64, audience string) (*Token, error)
 }
 
 type service struct {
-	alg    gojwt.Algorithm
 	issuer string
 }
 
-func New(alg gojwt.Algorithm, tokenIssuer string) Service {
+func New(tokenIssuer string) Service {
 	return &service{
-		alg:    alg,
 		issuer: tokenIssuer,
 	}
 }
 
-func (s *service) GenerateToken(claims map[string]interface{}, expirySeconds int64, audience string) (*Token, error) {
+func (s *service) GenerateToken(alg gojwt.Algorithm, claims map[string]interface{}, expirySeconds int64, audience string) (*Token, error) {
 	now := util.Time()
 	expiry := now.Add(time.Duration(expirySeconds) * time.Second)
 
-	builder, _ := gojwt.New(s.alg)
+	builder, _ := gojwt.New(alg)
 	jwt, err := builder.AddClaims(claims).
 		AddClaim("iss", s.issuer).
 		AddClaim("aud", audience).

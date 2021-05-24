@@ -46,3 +46,17 @@ func (mr *MockClientValidatorMockRecorder) ValidateTokenRequest(c, secret, grant
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidateTokenRequest", reflect.TypeOf((*MockClientValidator)(nil).ValidateTokenRequest), c, secret, grantType, scopes)
 }
+
+// ValidateLoginRequest mocks base method.
+func (m *MockClientValidator) ValidateLoginRequest(c *dal.Client, redirectUri string, scopes []string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ValidateLoginRequest", c, redirectUri, scopes)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ValidateLoginRequest indicates an expected call of ValidateLoginRequest.
+func (mr *MockClientValidatorMockRecorder) ValidateLoginRequest(c, redirectUri, scopes interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidateLoginRequest", reflect.TypeOf((*MockClientValidator)(nil).ValidateLoginRequest), c, redirectUri, scopes)
+}

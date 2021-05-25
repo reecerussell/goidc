@@ -13,3 +13,11 @@ func TestSha256(t *testing.T) {
 	hash := Sha256(testString)
 	assert.Equal(t, expectedHash, hash)
 }
+
+func TestSha256Half(t *testing.T) {
+	const testString = "Hello World"
+	const expectedHash = "pZGm1Av0IEBKARczz7exkA=="
+
+	hash := Sha256Half(testString)
+	assert.Equal(t, expectedHash, hash)
+}

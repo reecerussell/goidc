@@ -4,6 +4,10 @@ resource "aws_api_gateway_deployment" "default" {
   lifecycle {
     create_before_destroy = true
   }
+
+  depends_on = [
+    aws_api_gateway_rest_api.api
+  ]
 }
 
 module "dev_stage" {
@@ -12,6 +16,10 @@ module "dev_stage" {
   name           = "dev"
   api_gateway_id = aws_api_gateway_rest_api.api.id
   deployment_id  = aws_api_gateway_deployment.default.id
+
+  depends_on = [
+    aws_api_gateway_deployment.default
+  ]
 }
 
 module "test_stage" {
@@ -20,6 +28,10 @@ module "test_stage" {
   name           = "test"
   api_gateway_id = aws_api_gateway_rest_api.api.id
   deployment_id  = aws_api_gateway_deployment.default.id
+
+  depends_on = [
+    aws_api_gateway_deployment.default
+  ]
 }
 
 module "prod_stage" {
@@ -28,4 +40,8 @@ module "prod_stage" {
   name           = "prod"
   api_gateway_id = aws_api_gateway_rest_api.api.id
   deployment_id  = aws_api_gateway_deployment.default.id
+
+  depends_on = [
+    aws_api_gateway_deployment.default
+  ]
 }

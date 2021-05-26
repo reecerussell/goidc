@@ -4,6 +4,14 @@ provider "aws" {
   secret_key = var.AWS_SECRET_KEY
 }
 
+terraform {
+  backend "s3" {
+    bucket = "goidc-terraform-state"
+    key    = ".tfstate"
+    region = "eu-west-2"
+  }
+}
+
 module "api" {
   source = "./api"
 

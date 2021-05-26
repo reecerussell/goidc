@@ -56,10 +56,10 @@ aws lambda update-alias \
     --name "$ENV" \
     --function-version "$version"
 
-echo "Deploying API..."
-aws apigateway create-deployment \
-    --rest-api-id "$REST_API_ID" \
-    --stage-name "$ENV" \
-    --description "Deployed $NAME ($SOURCE_ZIP)"
+# echo "Deploying API..."
+# aws apigateway create-deployment \
+#     --rest-api-id "$REST_API_ID" \
+#     --stage-name "$ENV" \
+#     --description "Deployed $NAME ($SOURCE_ZIP)"
 
 echo "Successfully Deployed!"

@@ -46,7 +46,7 @@ module "generate_token_prod" {
   function_name             = module.generate_token.function_name
 }
 
-resource "aws_iam_policy" "kms" {
+resource "aws_iam_policy" "generate_token_kms" {
   name        = "generate-token-kms"
   path        = "/"
   description = "IAM policy for kms for generate-token"
@@ -68,9 +68,9 @@ resource "aws_iam_policy" "kms" {
 EOF
 }
 
-resource "aws_iam_role_policy_attachment" "kms_attachment" {
+resource "aws_iam_role_policy_attachment" "generate_token_kms_attachment" {
   role       = module.generate_token.execution_role
-  policy_arn = aws_iam_policy.kms.arn
+  policy_arn = aws_iam_policy.generate_token_kms.arn
 
-  depends_on = [aws_iam_policy.kms, module.generate_token]
+  depends_on = [aws_iam_policy.generate_token_kms, module.generate_token]
 }

@@ -1,12 +1,17 @@
 name: Generate Token
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - "master"
+    paths:
+      - "*.go"
   pull_request:
     branches:
       - "master"
+    paths:
+      - "*.go"
 
 jobs:
   build:

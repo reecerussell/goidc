@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -65,7 +64,6 @@ func TestGenerateToken(t *testing.T) {
 		}
 	})
 
-	// request the api
 	c := &http.Client{
 		Timeout: time.Second * 10,
 	}
@@ -81,13 +79,8 @@ func TestGenerateToken(t *testing.T) {
 	}
 	body := strings.NewReader(reqData.Encode())
 
-	req, err := http.NewRequest(http.MethodPost, targetUrl, body)
-	if err != nil {
-		panic(err)
-	}
-
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Add("Content-Length", strconv.Itoa(body.Len()))
+	req, _ := http.NewRequest(http.MethodPost, targetUrl, body)
+	req.Header["Content-Type"] = []string{"application/x-www-form-urlencoded"}
 
 	resp, err := c.Do(req)
 	if err != nil {
@@ -116,6 +109,6 @@ func TestGenerateToken(t *testing.T) {
 		var payload map[string]interface{}
 		err = json.Unmarshal(payloadBytes, &payload)
 
-		assert.Equal(t, []string{"test"}, payload["scopes"])
+		assert.Equal(t, []interface{}{"test"}, payload["scopes"])
 	})
 }

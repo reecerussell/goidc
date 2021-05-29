@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"log"
 	"net/http"
@@ -46,6 +47,11 @@ type Handler struct {
 }
 
 func (h *Handler) Handle(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	if req.StageVariables["environment"] == "test" {
+		b, _ := json.Marshal(req)
+		log.Printf("Request: %s\n", string(b))
+	}
+
 	if req.HTTPMethod != http.MethodPost {
 		return util.RespondMethodNotAllowed(errors.New("method not allowed")), nil
 	}

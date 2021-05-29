@@ -47,7 +47,7 @@ type Handler struct {
 }
 
 func (h *Handler) Handle(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	if req.StageVariables["environment"] == "test" {
+	if req.StageVariables["ENVIRONMENT"] == "test" {
 		b, _ := json.Marshal(req)
 		log.Printf("Request: %s\n", string(b))
 	}

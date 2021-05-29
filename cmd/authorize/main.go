@@ -81,7 +81,7 @@ func (h *Handler) Handle(ctx context.Context, req events.APIGatewayProxyRequest)
 		return util.RespondMethodNotAllowed(err), nil
 	}
 
-	if strings.Index(req.Headers["Content-Type"], "application/json") == -1 {
+	if strings.Index(util.Header(req, "Content-Type"), "application/json") == -1 {
 		err := errors.New("invalid content type")
 		return util.RespondBadRequest(err), nil
 	}

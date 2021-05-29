@@ -1,12 +1,12 @@
 package oauth
 
 import (
-	"bytes"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 	"testing"
@@ -70,19 +70,18 @@ func TestGenerateToken(t *testing.T) {
 	}
 
 	baseUrl := os.Getenv("BASE_API_URL")
-	url := fmt.Sprintf("%s/test/oauth/token", baseUrl)
+	targetUrl := fmt.Sprintf("%s/test/oauth/token", baseUrl)
 
-	reqData := map[string]interface{}{
-		"client_id":     testClientId,
-		"client_secret": "32y4i423",
-		"grant_type":    "client_credentials",
-		"scope":         "test",
+	reqData := url.Values{
+		"client_id":     {testClientId},
+		"client_secret": {"32y4i423"},
+		"grant_type":    {"client_credentials"},
+		"scope":         {"test"},
 	}
-	jsonBytes, _ := json.Marshal(reqData)
-	body := bytes.NewBuffer(jsonBytes)
+	body := strings.NewReader(reqData.Encode())
 
-	req, _ := http.NewRequest(http.MethodPost, url, body)
-	req.Header.Add("Content-Type", "application/json")
+	req, _ := http.NewRequest(http.MethodPost, targetUrl, body)
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	resp, err := c.Do(req)
 	if err != nil {
 		panic(err)

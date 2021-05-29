@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -86,6 +87,7 @@ func TestGenerateToken(t *testing.T) {
 	}
 
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Add("Content-Length", strconv.Itoa(body.Len()))
 
 	resp, err := c.Do(req)
 	if err != nil {

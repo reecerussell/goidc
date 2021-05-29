@@ -141,6 +141,7 @@ jobs:
     runs-on: ubuntu-latest
     if: (github.ref == 'ref/heads/master' && github.event_name == 'push') || github.event_name == 'workflow_dispatch'
     needs: publish
+    environment: Prod
     steps:
       - name: Checkout
         uses: actions/checkout@v2

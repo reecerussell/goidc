@@ -80,8 +80,13 @@ func TestGenerateToken(t *testing.T) {
 	}
 	body := strings.NewReader(reqData.Encode())
 
-	req, _ := http.NewRequest(http.MethodPost, targetUrl, body)
+	req, err := http.NewRequest(http.MethodPost, targetUrl, body)
+	if err != nil {
+		panic(err)
+	}
+
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
 	resp, err := c.Do(req)
 	if err != nil {
 		panic(err)

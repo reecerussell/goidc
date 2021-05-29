@@ -51,6 +51,7 @@ func (h *Handler) Handle(ctx context.Context, req events.APIGatewayProxyRequest)
 	}
 
 	if req.Headers["Content-Type"] != "application/x-www-form-urlencoded" {
+		log.Printf("Invalid Content Type: %v", req.Headers["Content-Type"])
 		return util.RespondBadRequest(errors.New("invalid content type")), nil
 	}
 

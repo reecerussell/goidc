@@ -82,6 +82,7 @@ func TestGenerateToken(t *testing.T) {
 	body := bytes.NewBuffer(jsonBytes)
 
 	req, _ := http.NewRequest(http.MethodPost, url, body)
+	req.Header.Add("Content-Type", "application/json")
 	resp, err := c.Do(req)
 	if err != nil {
 		panic(err)

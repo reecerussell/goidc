@@ -97,6 +97,8 @@ func TestGenerateToken(t *testing.T) {
 		err := json.NewDecoder(resp.Body).Decode(&tokenData)
 		assert.NoError(t, err)
 
+		t.Logf("Body: %v\n", tokenData)
+
 		assert.Equal(t, "Bearer", tokenData["token_type"])
 		assert.Equal(t, float64(3600), tokenData["expires"])
 

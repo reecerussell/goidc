@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"log"
 	"net/http"
@@ -47,16 +46,11 @@ type Handler struct {
 }
 
 func (h *Handler) Handle(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	if req.StageVariables["ENVIRONMENT"] == "test" {
-		b, _ := json.Marshal(req)
-		log.Printf("Request: %s\n", string(b))
-	}
-
 	if req.HTTPMethod != http.MethodPost {
 		return util.RespondMethodNotAllowed(errors.New("method not allowed")), nil
 	}
 
-	if req.Headers["Content-Type"] != "application/x-www-form-urlencoded" {
+	if util.Header(req, "Content-Type") != "application/x-www-form-urlencoded" {
 		log.Printf("Invalid Content Type: %v", req.Headers["Content-Type"])
 		return util.RespondBadRequest(errors.New("invalid content type")), nil
 	}

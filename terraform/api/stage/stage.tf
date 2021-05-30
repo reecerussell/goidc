@@ -8,9 +8,13 @@ resource "aws_api_gateway_stage" "stage" {
     CLIENTS_TABLE_NAME = "goidc-clients-${var.name}"
     USERS_TABLE_NAME   = "goidc-users-${var.name}"
     JWT_KEY_ID         = aws_kms_key.jwt.key_id
+    UI_BUCKET          = var.ui_bucket
   }
 
   lifecycle {
-    ignore_changes = [deployment_id]
+    ignore_changes = [
+      deployment_id,
+      variables.UI_BUCKET
+    ]
   }
 }

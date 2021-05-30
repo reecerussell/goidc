@@ -15,7 +15,7 @@ on:
 
 jobs:
   plan:
-    name: Terraform
+    name: Plan
     runs-on: ubuntu-latest
     steps:
       - name: Set up Terraform
@@ -79,8 +79,27 @@ jobs:
               body: output
             })
 
+  apply:
+    name: Apply
+    runs-on: ubuntu-latest
+    if: (github.ref == 'ref/heads/master' && github.event_name == 'push') || github.event_name == 'workflow_dispatch'
+    needs: plan
+    steps:
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Init
+        working-directory: terraform
+        run: terraform init
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+
       - name: Apply
-        if: github.refs == 'ref/heads/master' && github.event_name == 'push'
         working-directory: terraform
         run: terraform apply --auto-approve
         env:

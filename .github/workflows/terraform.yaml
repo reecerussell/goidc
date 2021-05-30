@@ -27,6 +27,10 @@ jobs:
       - name: Init
         working-directory: terraform
         run: terraform init
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
       - name: Validate
         working-directory: terraform

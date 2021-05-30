@@ -1,0 +1,91 @@
+name: Terraform
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "master"
+    paths:
+      - "terraform/**.tf"
+  pull_request:
+    branches:
+      - "master"
+    paths:
+      - "terraform/**.tf"
+
+jobs:
+  plan:
+    name: Terraform
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Init
+        working-directory: terraform
+        run: terraform init
+
+      - name: Validate
+        working-directory: terraform
+        run: terraform validate
+
+      - name: Plan
+        working-directory: terraform
+        id: plan
+        run: terraform plan
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          S3_SOURCE_BUCKET: ${{ secrets.S3_SOURCE_BUCKET }}
+
+      - uses: actions/github-script@0.9.0
+        if: github.event_name == 'pull_request'
+        env:
+          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Validation 🤖\`${{ steps.validate.outputs.stdout }}\`
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+            
+            <details><summary>Show Plan</summary>
+            
+            \`\`\`\n
+            ${process.env.PLAN}
+            \`\`\`
+            
+            </details>
+            
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
+              
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
+      - name: Apply
+        if: github.refs == 'ref/heads/master' && github.event_name == 'pull_request'
+        working-directory: terraform
+        run: |
+          terraform apply \
+            --var AWS_REGION=${AWS_REGION} \
+            --var AWS_ACCESS_KEY=${AWS_ACCESS_KEY} \
+            --var AWS_ACCESS_KEY=${AWS_SECRET_KEY} \
+            --var AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID} \
+            --var S3_SOURCE_BUCKET=${S3_SOURCE_BUCKET} \
+            --auto-approve
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          S3_SOURCE_BUCKET: ${{ secrets.S3_SOURCE_BUCKET }}

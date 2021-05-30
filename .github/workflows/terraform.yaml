@@ -39,19 +39,13 @@ jobs:
       - name: Plan
         working-directory: terraform
         id: plan
-        run: |
-          terraform plan \
-            --var AWS_REGION=${AWS_REGION} \
-            --var AWS_ACCESS_KEY=${AWS_ACCESS_KEY} \
-            --var AWS_ACCESS_KEY=${AWS_SECRET_KEY} \
-            --var AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID} \
-            --var S3_SOURCE_BUCKET=${S3_SOURCE_BUCKET}
+        run: terraform plan
         env:
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-          S3_SOURCE_BUCKET: ${{ secrets.S3_SOURCE_BUCKET }}
+          TF_VAR_AWS_REGION: ${{ secrets.AWS_REGION }}
+          TF_VAR_AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          TF_VAR_AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          TF_VAR_AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          TF_VAR_S3_SOURCE_BUCKET: ${{ secrets.S3_SOURCE_BUCKET }}
 
       - uses: actions/github-script@0.9.0
         if: github.event_name == 'pull_request'
@@ -85,17 +79,10 @@ jobs:
       - name: Apply
         if: github.refs == 'ref/heads/master' && github.event_name == 'push'
         working-directory: terraform
-        run: |
-          terraform apply \
-            --var AWS_REGION=${AWS_REGION} \
-            --var AWS_ACCESS_KEY=${AWS_ACCESS_KEY} \
-            --var AWS_ACCESS_KEY=${AWS_SECRET_KEY} \
-            --var AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID} \
-            --var S3_SOURCE_BUCKET=${S3_SOURCE_BUCKET} \
-            --auto-approve
+        run: terraform apply --auto-approve
         env:
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-          S3_SOURCE_BUCKET: ${{ secrets.S3_SOURCE_BUCKET }}
+          TF_VAR_AWS_REGION: ${{ secrets.AWS_REGION }}
+          TF_VAR_AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          TF_VAR_AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          TF_VAR_AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          TF_VAR_S3_SOURCE_BUCKET: ${{ secrets.S3_SOURCE_BUCKET }}

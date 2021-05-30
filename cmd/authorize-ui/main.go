@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -20,7 +21,10 @@ import (
 )
 
 func main() {
+	sess := session.Must(session.NewSession())
+	h := &Handler{sess: sess}
 
+	lambda.Start(h.Handle)
 }
 
 type Handler struct {

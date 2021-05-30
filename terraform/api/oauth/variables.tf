@@ -22,3 +22,7 @@ variable "aws_region" {
 variable "aws_account_id" {
   type = string
 }
+
+variable "ui_bucket" {
+  type = string
+}

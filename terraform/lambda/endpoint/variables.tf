@@ -29,5 +29,6 @@ variable "root_resource_id" {
 }
 
 variable "iam_policies" {
-  type = list(string)
+  type    = list(string)
+  default = []
 }

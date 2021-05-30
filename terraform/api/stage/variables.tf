@@ -10,3 +10,8 @@ variable "deployment_id" {
 variable "api_gateway_id" {
   type = string
 }
+
+variable "ui_bucket" {
+  type        = string
+  description = "The value for the UI_BUCKET stage variable"
+}

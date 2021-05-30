@@ -20,6 +20,7 @@ module "oauth_endpoints" {
   api_gateway_id            = aws_api_gateway_rest_api.api.id
   root_resource_id          = aws_api_gateway_resource.oauth_proxy.id
   api_gateway_execution_arn = aws_api_gateway_rest_api.api.execution_arn
+  ui_bucket                 = aws_s3_bucket.ui_bucket.bucket
   s3_bucket                 = var.s3_bucket
   aws_region                = var.aws_region
   aws_account_id            = var.aws_account_id

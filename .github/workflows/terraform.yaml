@@ -83,7 +83,7 @@ jobs:
             })
 
       - name: Apply
-        if: github.refs == 'ref/heads/master' && github.event_name == 'pull_request'
+        if: github.refs == 'ref/heads/master' && github.event_name == 'push'
         working-directory: terraform
         run: |
           terraform apply \

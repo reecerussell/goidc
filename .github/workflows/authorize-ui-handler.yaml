@@ -31,7 +31,7 @@ jobs:
           chmod +x ./scripts/build.sh
           ./scripts/build.sh
         env:
-          NAME: authorize
+          NAME: authorize-ui
           VERSION: ${{ github.run_id }}
           WORKING_DIRECTORY: cmd/authorize-ui
 
@@ -98,6 +98,7 @@ jobs:
     runs-on: ubuntu-latest
     if: (github.ref == 'ref/heads/master' && github.event_name == 'push') || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
     needs: publish
+    environment: Dev
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -120,6 +121,7 @@ jobs:
     runs-on: ubuntu-latest
     if: (github.ref == 'ref/heads/master' && github.event_name == 'push') || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
     needs: publish
+    environment: Test
     steps:
       - name: Checkout
         uses: actions/checkout@v2

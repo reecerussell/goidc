@@ -32,3 +32,8 @@ variable "iam_policies" {
   type    = list(string)
   default = []
 }
+
+variable "content_handling" {
+  type    = string
+  default = "CONVERT_TO_TEXT"
+}

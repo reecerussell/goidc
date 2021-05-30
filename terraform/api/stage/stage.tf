@@ -14,7 +14,7 @@ resource "aws_api_gateway_stage" "stage" {
   lifecycle {
     ignore_changes = [
       deployment_id,
-      variables.UI_BUCKET
+      variables
     ]
   }
 }

@@ -9,7 +9,7 @@ resource "aws_api_gateway_integration" "integration" {
   rest_api_id      = var.api_gateway_id
   resource_id      = var.root_resource_id
   http_method      = aws_api_gateway_method.method.http_method
-  content_handling = "CONVERT_TO_TEXT"
+  content_handling = var.content_handling
 
   integration_http_method = "POST"
   type                    = "AWS_PROXY"

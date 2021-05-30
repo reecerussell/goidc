@@ -4,6 +4,10 @@ resource "aws_api_gateway_rest_api" "api" {
   endpoint_configuration {
     types = ["REGIONAL"]
   }
+
+  binary_media_types = [
+    "*/*"
+  ]
 }
 
 resource "aws_api_gateway_resource" "oauth_proxy" {

@@ -12,7 +12,7 @@ export CI=true
 
 echo "Installing NPM modules..."
 npm i
-npm rebuild node-sass
+npm i --save-dev --unsafe-perm node-sass
 
 echo "Building..."
 npm run build

@@ -1,14 +1,19 @@
 import { ErrorModel, LoginModel, LoginResponseModel } from '../models';
 
-const loginUrl =
-  process.env.BASE_URL + process.env.NODE_ENV === 'production'
-    ? '/prod/oauth/login'
-    : '/dev/oauth/login';
+const loginUrl = (): string => {
+  const match = window.location.href.match(/prod|dev|test/);
+  if (!match || match.length < 1){
+    return "/oauth/authorize"
+  }
+
+  const stage = match[0];
+  return `/${stage}/oauth/authorize`
+}
 
 const login = async (
   data: LoginModel
 ): Promise<ErrorModel | LoginResponseModel> => {
-  const res = await fetch(loginUrl, {
+  const res = await fetch(loginUrl(), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

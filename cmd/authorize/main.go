@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -87,9 +86,7 @@ func (h *Handler) Handle(ctx context.Context, req events.APIGatewayProxyRequest)
 	}
 
 	var model LoginModel
-	json.Unmarshal([]byte(req.Body), &model)
-
-	log.Printf("Body: %s\n", req.Body)
+	util.ReadJSON(req, &model)
 
 	ctx = goidc.NewContext(ctx, &req)
 	client, err := h.clients.Get(ctx, model.ClientID)

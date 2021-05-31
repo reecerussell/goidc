@@ -184,44 +184,6 @@ func TestHandler_GivenInvalidContentType_ReturnsBadRequest(t *testing.T) {
 	assert.Equal(t, "invalid content type", data["error"])
 }
 
-func TestHandler_GivenInvalidContent_ReturnsMethodNotAllowed(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockUserProvider := dalMock.NewMockUserProvider(ctrl)
-	mockClientProvider := dalMock.NewMockClientProvider(ctrl)
-	mockTokenService := tokenMock.NewMockService(ctrl)
-
-	handler := &Handler{
-		sess:    mock.Session,
-		users:   mockUserProvider,
-		tokens:  mockTokenService,
-		clients: mockClientProvider,
-	}
-
-	req := events.APIGatewayProxyRequest{
-		HTTPMethod: http.MethodPost,
-		Headers: map[string]string{
-			"Content-Type": "application/json",
-		},
-		StageVariables: map[string]string{
-			"JWT_KEY_ID": "key id",
-		},
-		Body: "clientId=2394&scopes=hello world", // expecting JSON
-	}
-
-	ctx := context.Background()
-	resp, err := handler.Handle(ctx, req)
-	assert.NoError(t, err)
-	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
-	assert.False(t, resp.IsBase64Encoded)
-
-	var data map[string]interface{}
-	json.Unmarshal([]byte(resp.Body), &data)
-
-	assert.Equal(t, "invalid content", data["error"])
-}
-
 func TestHandler_GivenInvalidClient_ReturnsBadRequest(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()

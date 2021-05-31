@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 echo "Building..."
 echo "Working Directory: $WORKING_DIRECTORY"
 
@@ -10,6 +12,7 @@ export CI=true
 
 echo "Installing NPM modules..."
 npm i
+npm rebuild node-sass
 
 echo "Building..."
 npm run build

@@ -74,7 +74,8 @@ func (h *Handler) Handle(ctx context.Context, req events.APIGatewayProxyRequest)
 		Headers: map[string]string{
 			"Content-Length": strconv.Itoa(int(n)),
 			"Content-Type":   contentType,
-			"Cache-Control":  "public, max-age=604800, immutable",
+			"Cache-Control":  "public, max-age=604800",
+			"ETag":           util.Sha256(string(buf.Bytes())),
 		},
 		Body: base64.StdEncoding.EncodeToString(buf.Bytes()),
 	}, nil

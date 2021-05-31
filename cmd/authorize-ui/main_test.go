@@ -16,6 +16,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"github.com/reecerussell/goidc/util"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -76,7 +77,8 @@ func TestHandle_WhereFileExists_ReturnsFileAsBase64(t *testing.T) {
 	t.Run("Should Return Content Type", func(t *testing.T) {
 		assert.Contains(t, resp.Headers["Content-Type"], "text/html")
 		assert.Equal(t, strconv.Itoa(len(testFileData)), resp.Headers["Content-Length"])
-		assert.Equal(t, "public, max-age=604800, immutable", resp.Headers["Cache-Control"])
+		assert.Equal(t, "public, max-age=604800", resp.Headers["Cache-Control"])
+		assert.Equal(t, util.Sha256(string(testFileData)), resp.Headers["ETag"])
 	})
 
 	t.Run("Should Return Content", func(t *testing.T) {

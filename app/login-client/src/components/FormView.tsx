@@ -1,5 +1,4 @@
 import { ChangeEventHandler, FormEventHandler, FunctionComponent } from 'react';
-import classNames from 'classnames';
 import { ErrorModel } from '../models';
 
 export interface FormViewProps {
@@ -20,9 +19,9 @@ const FormView: FunctionComponent<FormViewProps> = ({
   onChange,
 }) => (
   <>
-    {error && error.paramName === null && (
+    {error &&  (
       <div className="alert alert-danger" role="alert">
-        {error.message}
+        {error.error}
       </div>
     )}
 
@@ -31,10 +30,8 @@ const FormView: FunctionComponent<FormViewProps> = ({
         <input
           type="email"
           autoComplete="username"
+          className="form-control"
           required
-          className={classNames('form-control', {
-            'is-invalid': error?.paramName === 'email',
-          })}
           id="email"
           name="email"
           placeholder="name@example.com"
@@ -47,10 +44,8 @@ const FormView: FunctionComponent<FormViewProps> = ({
         <input
           type="password"
           autoComplete="password"
+          className="form-control"
           required
-          className={classNames('form-control', {
-            'is-invalid': error?.paramName === 'password',
-          })}
           id="password"
           name="password"
           placeholder="Password"

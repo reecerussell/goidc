@@ -24,9 +24,7 @@ const login = async (
   if (res.status !== 200) {
     if (res.headers.get('Content-Type')?.indexOf('application/json') === -1) {
       return {
-        type: res.statusText,
-        statusCode: 500,
-        message: 'An error occurred while communicating with the server.',
+        error: 'An error occurred while communicating with the server.',
       };
     }
 

@@ -44,14 +44,14 @@ const Form: FunctionComponent<FormProps> = ({
       password,
       state,
       nonce,
-      clientId: parseInt(clientId ?? '0'),
+      clientId,
       redirectUri,
       responseType,
-      scope,
+      scopes: scope?.split(" ") ?? [],
     };
 
     const res = await login(data);
-    if ((res as ErrorModel)?.message) {
+    if ((res as ErrorModel)?.error) {
       setError(res as ErrorModel);
     } else {
       const data = res as LoginResponseModel;

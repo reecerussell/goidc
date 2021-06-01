@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "homepage": "authorize",
+  "main": "index.tsx",
   "dependencies": {
+    "@types/node": "^15.6.1",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "classnames": "^2.3.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-scripts": "4.0.3",
     "typescript": "^4.1.2",
     "web-vitals": "^1.0.1"
   },
@@ -38,8 +39,7 @@
     ]
   },
   "devDependencies": {
-    "@types/node": "^15.6.1",
     "node-sass": "^6.0.0",
-    "sass-loader": "^10.1.1"
+    "react-scripts": "^4.0.3"
   }
 }

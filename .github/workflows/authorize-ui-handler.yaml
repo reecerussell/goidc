@@ -6,12 +6,12 @@ on:
     branches:
       - "master"
     paths:
-      - "**.go"
+      - "cmd/authorize-ui/**.go"
   pull_request:
     branches:
       - "master"
     paths:
-      - "**.go"
+      - "cmd/authorize-ui/**.go"
 
 jobs:
   build:
@@ -27,9 +27,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build
-        run: |
-          chmod +x ./scripts/build.sh
-          ./scripts/build.sh
+        run: ./scripts/build.sh
         env:
           NAME: authorize-ui
           VERSION: ${{ github.run_id }}
@@ -82,9 +80,7 @@ jobs:
           path: dist/
 
       - name: Upload To S3
-        run: |
-          chmod +x ./scripts/publish.sh
-          ./scripts/publish.sh
+        run: ./scripts/publish.sh
         env:
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
@@ -104,9 +100,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Deploy
-        run: |
-          chmod +x ./scripts/deploy.sh
-          ./scripts/deploy.sh
+        run: ./scripts/deploy.sh
         env:
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
@@ -127,9 +121,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Deploy
-        run: |
-          chmod +x ./scripts/deploy.sh
-          ./scripts/deploy.sh
+        run: ./scripts/deploy.sh
         env:
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
@@ -150,9 +142,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Deploy
-        run: |
-          chmod +x ./scripts/deploy.sh
-          ./scripts/deploy.sh
+        run: ./scripts/deploy.sh
         env:
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}

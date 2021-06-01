@@ -27,9 +27,7 @@ jobs:
           node-version: '16'
 
       - name: Build
-        run: |
-          chmod +x ./scripts/build_ui.sh
-          ./scripts/build_ui.sh
+        run: ./scripts/build_ui.sh
         env:
           WORKING_DIRECTORY: app/login-client/
 
@@ -56,10 +54,7 @@ jobs:
           path: build/
 
       - name: Upload To S3
-        run: |
-          chmod +x ./scripts/publish_ui.sh
-          chmod +x ./scripts/ensure_aws.sh
-          ./scripts/publish_ui.sh
+        run: ./scripts/publish_ui.sh
         env:
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
@@ -79,10 +74,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Deploy
-        run: |
-          chmod +x ./scripts/deploy_ui.sh
-          chmod +x ./scripts/ensure_aws.sh
-          ./scripts/deploy_ui.sh
+        run: ./scripts/deploy_ui.sh
         env:
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
@@ -103,10 +95,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Deploy
-        run: |
-          chmod +x ./scripts/deploy_ui.sh
-          chmod +x ./scripts/ensure_aws.sh
-          ./scripts/deploy_ui.sh
+        run: ./scripts/deploy_ui.sh
         env:
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
@@ -127,10 +116,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Deploy
-        run: |
-          chmod +x ./scripts/deploy_ui.sh
-          chmod +x ./scripts/ensure_aws.sh
-          ./scripts/deploy_ui.sh
+        run: ./scripts/deploy_ui.sh
         env:
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}

@@ -1,0 +1,141 @@
+name: Authorize UI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "master"
+    paths:
+      - "app/login-client/**"
+  pull_request:
+    branches:
+      - "master"
+    paths:
+      - "app/login-client/**"
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Build
+        run: |
+          chmod +x ./scripts/build_ui.sh
+          ./scripts/build_ui.sh
+        env:
+          WORKING_DIRECTORY: app/login-client/
+
+      - name: Archive Build Artifacts
+        if: (github.ref == 'ref/heads/master' && github.event_name == 'push') || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: app/login-client/build/*
+
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    if: (github.ref == 'ref/heads/master' && github.event_name == 'push') || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: build
+          path: build/
+
+      - name: Upload To S3
+        run: |
+          chmod +x ./scripts/publish_ui.sh
+          chmod +x ./scripts/ensure_aws.sh
+          ./scripts/publish_ui.sh
+        env:
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          BUILD_DIR: build/.
+          VERSION: ${{ github.run_id }}
+          S3_BUCKET: ${{ secrets.S3_AUTH_UI_BUCKET }}
+
+  deployDev:
+    name: Deploy Dev
+    runs-on: ubuntu-latest
+    if: (github.ref == 'ref/heads/master' && github.event_name == 'push') || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+    needs: publish
+    environment: Dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Deploy
+        run: |
+          chmod +x ./scripts/deploy_ui.sh
+          chmod +x ./scripts/ensure_aws.sh
+          ./scripts/deploy_ui.sh
+        env:
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          REST_API_ID: ${{ secrets.REST_API_ID }}
+          ENV: dev
+          VERSION: ${{ github.run_id }}
+          VAR: UI_VERSION
+
+  deployTest:
+    name: Deploy Test
+    runs-on: ubuntu-latest
+    if: (github.ref == 'ref/heads/master' && github.event_name == 'push') || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+    needs: publish
+    environment: Test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Deploy
+        run: |
+          chmod +x ./scripts/deploy_ui.sh
+          chmod +x ./scripts/ensure_aws.sh
+          ./scripts/deploy_ui.sh
+        env:
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          REST_API_ID: ${{ secrets.REST_API_ID }}
+          ENV: test
+          VERSION: ${{ github.run_id }}
+          VAR: UI_VERSION
+
+  deployProd:
+    name: Deploy Prod
+    runs-on: ubuntu-latest
+    if: (github.ref == 'ref/heads/master' && github.event_name == 'push') || github.event_name == 'workflow_dispatch'
+    needs: publish
+    environment: Prod
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Deploy
+        run: |
+          chmod +x ./scripts/deploy_ui.sh
+          chmod +x ./scripts/ensure_aws.sh
+          ./scripts/deploy_ui.sh
+        env:
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          REST_API_ID: ${{ secrets.REST_API_ID }}
+          ENV: prod
+          VERSION: ${{ github.run_id }}
+          VAR: UI_VERSION

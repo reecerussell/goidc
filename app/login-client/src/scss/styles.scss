@@ -1,0 +1,22 @@
+@import 'form';
+@import 'alerts';
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  width: 100%;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #f5f5f5;
+}
+
+#root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  width: 100%;
+}

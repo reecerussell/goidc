@@ -63,13 +63,39 @@ func (h *Handler) Handle(ctx context.Context, req events.APIGatewayProxyRequest)
 		return util.RespondError(err), nil
 	}
 
+	contentType := http.DetectContentType(buf.Bytes())
+	if contentType == "text/plain; charset=utf-8" {
+		contentType = getFileTypeByExtension(path)
+	}
+
 	return events.APIGatewayProxyResponse{
 		StatusCode:      http.StatusOK,
 		IsBase64Encoded: true,
 		Headers: map[string]string{
 			"Content-Length": strconv.Itoa(int(n)),
-			"Content-Type":   http.DetectContentType(buf.Bytes()),
+			"Content-Type":   contentType,
+			"Cache-Control":  "public, max-age=604800",
+			"ETag":           util.Sha256(string(buf.Bytes())),
 		},
 		Body: base64.StdEncoding.EncodeToString(buf.Bytes()),
 	}, nil
+}
+
+func getFileTypeByExtension(filename string) string {
+	parts := strings.Split(filename, ".")
+	ext := parts[0]
+	if l := len(parts); l > 1 {
+		ext = parts[l-1]
+	}
+
+	switch ext {
+	case "js":
+		return "application/javascript; charset=utf-8"
+	case "css":
+		return "text/css; charset=utf-8"
+	case "html":
+		return "text/html; charset=utf-8"
+	default:
+		return "text/plain; charset=utf-8"
+	}
 }

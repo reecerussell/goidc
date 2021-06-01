@@ -46,3 +46,17 @@ func (mr *MockUserValidatorMockRecorder) ValidatePassword(u, password interface{
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidatePassword", reflect.TypeOf((*MockUserValidator)(nil).ValidatePassword), u, password)
 }
+
+// ValidateUser mocks base method.
+func (m *MockUserValidator) ValidateUser(email, password string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ValidateUser", email, password)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ValidateUser indicates an expected call of ValidateUser.
+func (mr *MockUserValidatorMockRecorder) ValidateUser(email, password interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidateUser", reflect.TypeOf((*MockUserValidator)(nil).ValidateUser), email, password)
+}

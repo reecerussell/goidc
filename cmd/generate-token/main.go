@@ -5,7 +5,6 @@ import (
 	"errors"
 	"log"
 	"net/http"
-	"net/url"
 	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -55,7 +54,7 @@ func (h *Handler) Handle(ctx context.Context, req events.APIGatewayProxyRequest)
 		return util.RespondBadRequest(errors.New("invalid content type")), nil
 	}
 
-	data, _ := url.ParseQuery(req.Body)
+	data := util.ReadForm(req)
 	clientId := data.Get("client_id")
 	clientSecret := data.Get("client_secret")
 	grantType := data.Get("grant_type")

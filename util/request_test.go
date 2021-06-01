@@ -61,3 +61,25 @@ func TestReadJSON_GivenPlainTextRequest_UnmarshalsBody(t *testing.T) {
 
 	assert.Equal(t, "bar", data["foo"])
 }
+
+func TestReadForm_GivenBase64Request_DecodesBody(t *testing.T) {
+	const body = "Zm9vPWJhcg=="
+
+	data := ReadForm(events.APIGatewayProxyRequest{
+		IsBase64Encoded: true,
+		Body:            body,
+	})
+
+	assert.Equal(t, "bar", data.Get("foo"))
+}
+
+func TestReadForm_GivenPlainTextRequest_DecodesBody(t *testing.T) {
+	const body = "foo=bar"
+
+	data := ReadForm(events.APIGatewayProxyRequest{
+		IsBase64Encoded: false,
+		Body:            body,
+	})
+
+	assert.Equal(t, "bar", data.Get("foo"))
+}

@@ -58,6 +58,7 @@ jobs:
       - name: Upload To S3
         run: |
           chmod +x ./scripts/publish_ui.sh
+          chmod +x ./scripts/ensure_aws.sh
           ./scripts/publish_ui.sh
         env:
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
@@ -80,6 +81,7 @@ jobs:
       - name: Deploy
         run: |
           chmod +x ./scripts/deploy_ui.sh
+          chmod +x ./scripts/ensure_aws.sh
           ./scripts/deploy_ui.sh
         env:
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
@@ -103,6 +105,7 @@ jobs:
       - name: Deploy
         run: |
           chmod +x ./scripts/deploy_ui.sh
+          chmod +x ./scripts/ensure_aws.sh
           ./scripts/deploy_ui.sh
         env:
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
@@ -126,6 +129,7 @@ jobs:
       - name: Deploy
         run: |
           chmod +x ./scripts/deploy_ui.sh
+          chmod +x ./scripts/ensure_aws.sh
           ./scripts/deploy_ui.sh
         env:
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}

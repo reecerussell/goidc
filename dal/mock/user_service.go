@@ -5,6 +5,7 @@
 package mock
 
 import (
+	context "context"
 	gomock "github.com/golang/mock/gomock"
 	dal "github.com/reecerussell/goidc/dal"
 	reflect "reflect"
@@ -34,15 +35,15 @@ func (m *MockUserService) EXPECT() *MockUserServiceMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockUserService) Create(u *dal.User) error {
+func (m *MockUserService) Create(ctx context.Context, u *dal.User) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", u)
+	ret := m.ctrl.Call(m, "Create", ctx, u)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockUserServiceMockRecorder) Create(u interface{}) *gomock.Call {
+func (mr *MockUserServiceMockRecorder) Create(ctx, u interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserService)(nil).Create), u)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserService)(nil).Create), ctx, u)
 }

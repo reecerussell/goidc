@@ -3,6 +3,7 @@ package util
 import (
 	"encoding/base64"
 	"encoding/json"
+	"net/url"
 	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -30,4 +31,17 @@ func ReadJSON(req events.APIGatewayProxyRequest, v interface{}) {
 	}
 
 	json.Unmarshal(body, v)
+}
+
+// ReadForm decodes an incoming request's body into url.Values.
+// If the request is base64 encoded, it will be decoded.
+func ReadForm(req events.APIGatewayProxyRequest) url.Values {
+	body := req.Body
+	if req.IsBase64Encoded {
+		bytes, _ := base64.URLEncoding.DecodeString(body)
+		body = string(bytes)
+	}
+
+	data, _ := url.ParseQuery(body)
+	return data
 }

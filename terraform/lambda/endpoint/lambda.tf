@@ -1,5 +1,5 @@
 resource "aws_lambda_function" "function" {
-  function_name = var.name
+  function_name = "goidc-${var.name}"
   role          = aws_iam_role.execution.arn
   s3_bucket     = var.s3_bucket
   s3_key        = "sampleapp.zip"
@@ -13,4 +13,8 @@ resource "aws_lambda_function" "function" {
   }
 
   depends_on = [aws_iam_role.execution]
+
+  tags {
+    goidc = yes
+  }
 }

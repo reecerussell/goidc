@@ -12,33 +12,6 @@ module "authorize_get" {
   content_handling = "CONVERT_TO_BINARY"
 }
 
-module "authorize_get_dev" {
-  source = "../../lambda/alias"
-
-  name                      = "dev"
-  api_gateway_execution_arn = var.api_gateway_execution_arn
-  function_arn              = module.authorize_get.function_arn
-  function_name             = module.authorize_get.function_name
-}
-
-module "authorize_get_test" {
-  source = "../../lambda/alias"
-
-  name                      = "test"
-  api_gateway_execution_arn = var.api_gateway_execution_arn
-  function_arn              = module.authorize_get.function_arn
-  function_name             = module.authorize_get.function_name
-}
-
-module "authorize_get_prod" {
-  source = "../../lambda/alias"
-
-  name                      = "prod"
-  api_gateway_execution_arn = var.api_gateway_execution_arn
-  function_arn              = module.authorize_get.function_arn
-  function_name             = module.authorize_get.function_name
-}
-
 resource "aws_iam_policy" "authorize_s3" {
   name        = "authorize-s3"
   path        = "/"

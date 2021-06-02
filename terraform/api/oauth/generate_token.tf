@@ -19,33 +19,6 @@ module "generate_token" {
   iam_policies = ["arn:aws:iam::aws:policy/AmazonDynamoDBReadOnlyAccess"]
 }
 
-module "generate_token_dev" {
-  source = "../../lambda/alias"
-
-  name                      = "dev"
-  api_gateway_execution_arn = var.api_gateway_execution_arn
-  function_arn              = module.generate_token.function_arn
-  function_name             = module.generate_token.function_name
-}
-
-module "generate_token_test" {
-  source = "../../lambda/alias"
-
-  name                      = "test"
-  api_gateway_execution_arn = var.api_gateway_execution_arn
-  function_arn              = module.generate_token.function_arn
-  function_name             = module.generate_token.function_name
-}
-
-module "generate_token_prod" {
-  source = "../../lambda/alias"
-
-  name                      = "prod"
-  api_gateway_execution_arn = var.api_gateway_execution_arn
-  function_arn              = module.generate_token.function_arn
-  function_name             = module.generate_token.function_name
-}
-
 resource "aws_iam_policy" "generate_token_kms" {
   name        = "generate-token-kms"
   path        = "/"

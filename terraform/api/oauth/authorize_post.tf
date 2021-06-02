@@ -19,33 +19,6 @@ module "authorize_post" {
   iam_policies = ["arn:aws:iam::aws:policy/AmazonDynamoDBReadOnlyAccess"]
 }
 
-module "authorize_post_dev" {
-  source = "../../lambda/alias"
-
-  name                      = "dev"
-  api_gateway_execution_arn = var.api_gateway_execution_arn
-  function_arn              = module.authorize_post.function_arn
-  function_name             = module.authorize_post.function_name
-}
-
-module "authorize_post_test" {
-  source = "../../lambda/alias"
-
-  name                      = "test"
-  api_gateway_execution_arn = var.api_gateway_execution_arn
-  function_arn              = module.authorize_post.function_arn
-  function_name             = module.authorize_post.function_name
-}
-
-module "authorize_post_prod" {
-  source = "../../lambda/alias"
-
-  name                      = "prod"
-  api_gateway_execution_arn = var.api_gateway_execution_arn
-  function_arn              = module.authorize_post.function_arn
-  function_name             = module.authorize_post.function_name
-}
-
 resource "aws_iam_policy" "authorize_kms" {
   name        = "authorize-kms"
   path        = "/"

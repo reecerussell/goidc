@@ -13,6 +13,11 @@ on:
     paths:
       - "cmd/authorize-ui/**.go"
 
+env:
+  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+  AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+
 jobs:
   build:
     name: Build
@@ -38,7 +43,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: build
-          path: cmd/authorize-ui/authorize-ui.${{github.run_id}}.zip
+          path: cmd/authorize-ui/build.zip
       
   test:
     name: Test
@@ -58,17 +63,14 @@ jobs:
           go test ./...
           cd cmd/authorize-ui
           go test
-        env:
-          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          UI_BUCKET: goidc-authorize-ui
 
   publish:
     name: Publish
     runs-on: ubuntu-latest
     if: (github.ref == 'ref/heads/master' && github.event_name == 'push') || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
     needs: test
+    outputs:
+      version: ${{ steps.publish.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -80,14 +82,13 @@ jobs:
           path: dist/
 
       - name: Upload To S3
+        id: publish
         run: ./scripts/publish.sh
         env:
-          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          FILE: dist/authorize-ui.${{github.run_id}}.zip
+          FILE: dist/build.zip
           S3_BUCKET: ${{ secrets.S3_SOURCE_BUCKET }}
           S3_KEY: authorize-ui/${{github.run_id}}.zip
+          NAME: goidc-authorize-ui
 
   deployDev:
     name: Deploy Dev
@@ -100,15 +101,11 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Deploy
-        run: ./scripts/deploy.sh
+        run: ./scripts/deploy_function.sh
         env:
-          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          S3_BUCKET: ${{ secrets.S3_SOURCE_BUCKET }}
-          SOURCE_ZIP: authorize-ui/${{github.run_id}}.zip
-          NAME: authorize-ui
-          ENV: dev
+          NAME: goidc-authorize-ui
+          STAGE: dev
+          VERSION: ${{ needs.publish.outputs.version }}
 
   deployTest:
     name: Deploy Test
@@ -121,15 +118,11 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Deploy
-        run: ./scripts/deploy.sh
+        run: ./scripts/deploy_function.sh
         env:
-          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          S3_BUCKET: ${{ secrets.S3_SOURCE_BUCKET }}
-          SOURCE_ZIP: authorize-ui/${{github.run_id}}.zip
-          NAME: authorize-ui
-          ENV: test
+          NAME: goidc-authorize-ui
+          STAGE: test
+          VERSION: ${{ needs.publish.outputs.version }}
 
   deployProd:
     name: Deploy Prod
@@ -142,12 +135,8 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Deploy
-        run: ./scripts/deploy.sh
+        run: ./scripts/deploy_function.sh
         env:
-          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          S3_BUCKET: ${{ secrets.S3_SOURCE_BUCKET }}
-          SOURCE_ZIP: authorize-ui/${{github.run_id}}.zip
-          NAME: authorize-ui
-          ENV: prod
+          NAME: goidc-authorize-ui
+          STAGE: prod
+          VERSION: ${{ needs.publish.outputs.version }}

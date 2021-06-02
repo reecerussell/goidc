@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
 	"errors"
 	"log"
 	"net/http"
@@ -96,10 +97,11 @@ func (h *Handler) Handle(ctx context.Context, req events.APIGatewayProxyRequest)
 		return util.RespondError(err), nil
 	}
 
+	passwordHash := h.hsr.Hash([]byte(model.Password))
 	user := &dal.User{
 		ID:           uuid.New().String(),
 		Email:        model.Email,
-		PasswordHash: string(h.hsr.Hash([]byte(model.Password))),
+		PasswordHash: base64.StdEncoding.EncodeToString(passwordHash),
 	}
 	err = h.us.Create(ctx, user)
 	if err != nil {

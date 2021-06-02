@@ -21,4 +21,10 @@ aws lambda update-function-code \
     --s3-bucket "$S3_BUCKET" \
     --s3-key "$S3_KEY"
 
+echo "Publish new version..."
+aws lambda publish-version --function-name "$NAME" > /tmp/version
+
+version=$(cat /tmp/version | jq '.Version' | sed 's/\"//g')
+echo "::set-output name=version=$version"
+
 echo "Successfully published!"

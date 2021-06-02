@@ -16,6 +16,10 @@ module "generate_token" {
   aws_region       = var.aws_region
 
   iam_policies = ["arn:aws:iam::aws:policy/AmazonDynamoDBReadOnlyAccess"]
+
+  depends_on = [
+    aws_api_gateway_resource.token_proxy
+  ]
 }
 
 resource "aws_iam_policy" "generate_token_kms" {

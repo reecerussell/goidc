@@ -29,7 +29,11 @@ module "oauth_endpoints" {
   aws_region                = var.aws_region
   aws_account_id            = var.aws_account_id
 
-  depends_on = [aws_api_gateway_resource.oauth_proxy]
+  depends_on = [
+    aws_api_gateway_resource.oauth_proxy,
+    aws_api_gateway_rest_api.api,
+    aws_s3_bucket.ui_bucket
+  ]
 }
 
 resource "aws_api_gateway_resource" "api_proxy" {
@@ -51,5 +55,9 @@ module "users_endpoints" {
   aws_region                = var.aws_region
   aws_account_id            = var.aws_account_id
 
-  depends_on = [aws_api_gateway_resource.api_proxy]
+  depends_on = [
+    aws_api_gateway_rest_api.api,
+    aws_api_gateway_resource.api_proxy,
+    aws_s3_bucket.ui_bucket
+  ]
 }

@@ -16,4 +16,8 @@ resource "aws_api_gateway_stage" "stage" {
       variables
     ]
   }
+
+  depends_on = [
+    aws_kms_key.jwt
+  ]
 }

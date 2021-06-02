@@ -7,7 +7,6 @@ module "authorize_get" {
   aws_account_id = var.aws_account_id
   api_gateway_id   = var.api_gateway_id
   root_resource_id = aws_api_gateway_resource.authorize_proxy.id
-  root_resource_path = aws_api_gateway_resource.authorize_proxy.path
   s3_bucket        = var.s3_bucket
   aws_region       = var.aws_region
   content_handling = "CONVERT_TO_BINARY"
@@ -111,4 +110,31 @@ resource "aws_api_gateway_integration_response" "authorize_ui_response_integrati
     aws_api_gateway_resource.authorize_ui_proxy,
     aws_api_gateway_method.authorize_ui_get
   ]
+}
+
+module "authorize_get_dev" {
+  source = "../../lambda/alias"
+
+  name                      = "dev"
+  api_gateway_execution_arn = var.api_gateway_execution_arn
+  function_arn              = module.authorize_get.function_arn
+  function_name             = module.authorize_get.function_name
+}
+
+module "authorize_get_test" {
+  source = "../../lambda/alias"
+
+  name                      = "test"
+  api_gateway_execution_arn = var.api_gateway_execution_arn
+  function_arn              = module.authorize_get.function_arn
+  function_name             = module.authorize_get.function_name
+}
+
+module "authorize_get_prod" {
+  source = "../../lambda/alias"
+
+  name                      = "prod"
+  api_gateway_execution_arn = var.api_gateway_execution_arn
+  function_arn              = module.authorize_get.function_arn
+  function_name             = module.authorize_get.function_name
 }

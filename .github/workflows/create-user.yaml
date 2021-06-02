@@ -1,4 +1,4 @@
-name: Authorize UI Handler
+name: Create User
 
 on:
   workflow_dispatch:
@@ -6,12 +6,12 @@ on:
     branches:
       - "master"
     paths:
-      - "cmd/authorize-ui/**.go"
+      - "cmd/create-user/**.go"
   pull_request:
     branches:
       - "master"
     paths:
-      - "cmd/authorize-ui/**.go"
+      - "cmd/create-user/**.go"
 
 env:
   AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
@@ -34,16 +34,16 @@ jobs:
       - name: Build
         run: ./scripts/build.sh
         env:
-          NAME: authorize-ui
+          NAME: create-user
           VERSION: ${{ github.run_id }}
-          WORKING_DIRECTORY: cmd/authorize-ui
+          WORKING_DIRECTORY: cmd/create-user
 
       - name: Archive Build Artifacts
         if: (github.ref == 'ref/heads/master' && github.event_name == 'push') || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@v2
         with:
           name: build
-          path: cmd/authorize-ui/build.zip
+          path: cmd/create-user/build.zip
       
   test:
     name: Test
@@ -61,7 +61,7 @@ jobs:
       - name: Test
         run: |
           go test ./...
-          cd cmd/authorize-ui
+          cd cmd/create-user
           go test
 
   publish:
@@ -87,8 +87,8 @@ jobs:
         env:
           FILE: dist/build.zip
           S3_BUCKET: ${{ secrets.S3_SOURCE_BUCKET }}
-          S3_KEY: authorize-ui/${{github.run_id}}.zip
-          NAME: goidc-authorize-ui
+          S3_KEY: create-user/${{github.run_id}}.zip
+          NAME: goidc-create-user
 
   deployDev:
     name: Deploy Dev
@@ -103,7 +103,7 @@ jobs:
       - name: Deploy
         run: ./scripts/deploy_function.sh
         env:
-          NAME: goidc-authorize-ui
+          NAME: goidc-create-user
           STAGE: dev
           VERSION: ${{ needs.publish.outputs.version }}
 
@@ -120,7 +120,7 @@ jobs:
       - name: Deploy
         run: ./scripts/deploy_function.sh
         env:
-          NAME: goidc-authorize-ui
+          NAME: goidc-create-user
           STAGE: test
           VERSION: ${{ needs.publish.outputs.version }}
 
@@ -137,6 +137,6 @@ jobs:
       - name: Deploy
         run: ./scripts/deploy_function.sh
         env:
-          NAME: goidc-authorize-ui
+          NAME: goidc-create-user
           STAGE: prod
           VERSION: ${{ needs.publish.outputs.version }}

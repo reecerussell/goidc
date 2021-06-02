@@ -6,7 +6,9 @@ resource "aws_api_gateway_deployment" "default" {
   }
 
   depends_on = [
-    aws_api_gateway_rest_api.api
+    aws_api_gateway_rest_api.api,
+    module.oauth_endpoints,
+    module.users_endpoints
   ]
 }
 

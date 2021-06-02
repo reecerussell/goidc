@@ -12,15 +12,15 @@ variable "aws_region" {
   type = string
 }
 
-variable "aws_account_id" {
-  type = string
-}
-
 variable "http_method" {
   type = string
 }
 
 variable "api_gateway_id" {
+  type = string
+}
+
+variable "aws_account_id" {
   type = string
 }
 

@@ -3,6 +3,11 @@ name: Terraform Destroy
 on:
   workflow_dispatch:
 
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+  AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+
 jobs:
   destroy:
     name: Destroy
@@ -18,18 +23,11 @@ jobs:
       - name: Init
         working-directory: terraform
         run: terraform init
-        env:
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
       - name: Destroy
         working-directory: terraform
         run: terraform destroy --auto-approve
         env:
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
           TF_VAR_AWS_REGION: ${{ secrets.AWS_REGION }}
           TF_VAR_AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           TF_VAR_AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}

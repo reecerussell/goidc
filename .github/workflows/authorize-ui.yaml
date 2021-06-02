@@ -13,6 +13,11 @@ on:
     paths:
       - "app/login-client/**"
 
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+  AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+
 jobs:
   build:
     name: Build
@@ -56,9 +61,6 @@ jobs:
       - name: Upload To S3
         run: ./scripts/publish_ui.sh
         env:
-          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
           BUILD_DIR: build/.
           VERSION: ${{ github.run_id }}
           S3_BUCKET: ${{ secrets.S3_AUTH_UI_BUCKET }}
@@ -76,9 +78,6 @@ jobs:
       - name: Deploy
         run: ./scripts/deploy_ui.sh
         env:
-          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
           REST_API_ID: ${{ secrets.REST_API_ID }}
           ENV: dev
           VERSION: ${{ github.run_id }}
@@ -97,9 +96,6 @@ jobs:
       - name: Deploy
         run: ./scripts/deploy_ui.sh
         env:
-          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
           REST_API_ID: ${{ secrets.REST_API_ID }}
           ENV: test
           VERSION: ${{ github.run_id }}
@@ -118,9 +114,6 @@ jobs:
       - name: Deploy
         run: ./scripts/deploy_ui.sh
         env:
-          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
           REST_API_ID: ${{ secrets.REST_API_ID }}
           ENV: prod
           VERSION: ${{ github.run_id }}

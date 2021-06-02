@@ -35,4 +35,5 @@ jobs:
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
           CLIENTS_TABLE_NAME: goidc-clients-test
+          USERS_TABLE_NAME: goidc-users-test
           BASE_API_URL: ${{ secrets.BASE_API_URL }}

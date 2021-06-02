@@ -10,6 +10,7 @@ module "authorize_post" {
   name        = "authorize"
   http_method = "POST"
 
+  aws_account_id = var.aws_account_id
   api_gateway_id   = var.api_gateway_id
   root_resource_id = aws_api_gateway_resource.authorize_proxy.id
   s3_bucket        = var.s3_bucket

@@ -4,6 +4,7 @@ module "create_user" {
   name        = "create-user"
   http_method = "POST"
 
+  aws_account_id = var.aws_account_id
   api_gateway_id   = var.api_gateway_id
   root_resource_id = aws_api_gateway_resource.users_proxy.id
   s3_bucket        = var.s3_bucket

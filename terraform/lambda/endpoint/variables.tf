@@ -20,6 +20,10 @@ variable "api_gateway_id" {
   type = string
 }
 
+variable "aws_account_id" {
+  type = string
+}
+
 variable "root_resource_id" {
   type = string
 }

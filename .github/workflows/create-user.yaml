@@ -105,6 +105,7 @@ jobs:
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
+          REST_API_ID: ${{ secrets.REST_API_ID }}
           DESCRIPTION: "Deploy Function goidc-create-user (${{github.run_id}})"
           STAGE: dev
 
@@ -124,6 +125,7 @@ jobs:
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
+          REST_API_ID: ${{ secrets.REST_API_ID }}
           DESCRIPTION: "Deploy Function goidc-create-user (${{github.run_id}})"
           STAGE: test
 
@@ -143,5 +145,6 @@ jobs:
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
+          REST_API_ID: ${{ secrets.REST_API_ID }}
           DESCRIPTION: "Deploy Function goidc-create-user (${{github.run_id}})"
           STAGE: prod

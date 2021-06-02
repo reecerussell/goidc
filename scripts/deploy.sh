@@ -48,11 +48,11 @@ aws lambda update-function-code \
     --s3-key "$SOURCE_ZIP"
 
 echo "Publishing new version..."
-version=$(aws lambda publish-version --function-name "$NAME" | jq '.Version' | sed 's/"//g')
+version=$(aws lambda publish-version --function-name "goidc-$NAME" | jq '.Version' | sed 's/"//g')
 
 echo "Updating '$ENV' version..."
 aws lambda update-alias \
-    --function-name "$NAME" \
+    --function-name "goidc-$NAME" \
     --name "$ENV" \
     --function-version "$version"
 

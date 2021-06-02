@@ -23,7 +23,7 @@ echo "Built successfully!"
 
 echo "Zipping..."
 
-zip_name="$NAME.$VERSION.zip"
+zip_name="build.zip"
 zip $zip_name main
 
 echo "Zipped: $zip_name"

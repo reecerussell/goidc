@@ -69,11 +69,13 @@ type ResponseModel struct {
 // Handle is the handler function used to handle a request.
 func (h *Handler) Handle(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	if req.HTTPMethod != http.MethodPost {
+		log.Printf("Invalid method: %s\n", req.HTTPMethod)
 		err := errors.New("method not allowed")
 		return util.RespondMethodNotAllowed(err), nil
 	}
 
-	if strings.Index(util.Header(req, "Content-Type"), "application/json") == -1 {
+	if h := util.Header(req, "Content-Type"); strings.Index(h, "application/json") == -1 {
+		log.Printf("Invalid content type: %s\n", h)
 		err := errors.New("invalid content type")
 		return util.RespondBadRequest(err), nil
 	}
@@ -83,6 +85,8 @@ func (h *Handler) Handle(ctx context.Context, req events.APIGatewayProxyRequest)
 
 	err := h.uv.ValidateUser(model.Email, model.Password)
 	if err != nil {
+		log.Printf("Invalid user data: %v\n", err)
+
 		return util.RespondBadRequest(err), nil
 	}
 
@@ -90,9 +94,12 @@ func (h *Handler) Handle(ctx context.Context, req events.APIGatewayProxyRequest)
 	_, err = h.up.GetByEmail(ctx, model.Email)
 	if err != dal.ErrUserNotFound {
 		if err == nil {
+			log.Printf("User already exists: %s\n", model.Email)
 			err := errors.New("user already exists")
 			return util.RespondBadRequest(err), nil
 		}
+
+		log.Printf("users: failed to get user by email: %v\n", err)
 
 		return util.RespondError(err), nil
 	}
@@ -105,8 +112,12 @@ func (h *Handler) Handle(ctx context.Context, req events.APIGatewayProxyRequest)
 	}
 	err = h.us.Create(ctx, user)
 	if err != nil {
+		log.Printf("users: failed to create user: %v\n", err)
+
 		return util.RespondError(err), nil
 	}
+
+	log.Printf("Created user with id: %s\n", user.ID)
 
 	data := ResponseModel{ID: user.ID}
 	return util.Respond(http.StatusOK, data), nil

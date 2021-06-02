@@ -8,7 +8,6 @@ module "authorize_get" {
   root_resource_id = aws_api_gateway_resource.authorize_proxy.id
   s3_bucket        = var.s3_bucket
   aws_region       = var.aws_region
-  aws_account_id   = var.aws_account_id
   content_handling = "CONVERT_TO_BINARY"
 }
 

@@ -14,7 +14,6 @@ module "generate_token" {
   root_resource_id = aws_api_gateway_resource.token_proxy.id
   s3_bucket        = var.s3_bucket
   aws_region       = var.aws_region
-  aws_account_id   = var.aws_account_id
 
   iam_policies = ["arn:aws:iam::aws:policy/AmazonDynamoDBReadOnlyAccess"]
 }

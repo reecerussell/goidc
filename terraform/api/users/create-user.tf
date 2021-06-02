@@ -8,7 +8,6 @@ module "create_user" {
   root_resource_id = aws_api_gateway_resource.users_proxy.id
   s3_bucket        = var.s3_bucket
   aws_region       = var.aws_region
-  aws_account_id   = var.aws_account_id
 
   iam_policies = ["arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"]
 

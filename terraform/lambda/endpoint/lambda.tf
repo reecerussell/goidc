@@ -15,6 +15,6 @@ resource "aws_lambda_function" "function" {
   depends_on = [aws_iam_role.execution]
 
   tags = {
-    goidc = yes
+    goidc = "yes"
   }
 }

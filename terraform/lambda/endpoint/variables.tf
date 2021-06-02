@@ -28,6 +28,10 @@ variable "root_resource_id" {
   type = string
 }
 
+variable "root_resource_path" {
+  type = string
+}
+
 variable "iam_policies" {
   type    = list(string)
   default = []

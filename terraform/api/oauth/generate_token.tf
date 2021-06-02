@@ -13,6 +13,7 @@ module "generate_token" {
   aws_account_id = var.aws_account_id
   api_gateway_id   = var.api_gateway_id
   root_resource_id = aws_api_gateway_resource.token_proxy.id
+  root_resource_path = aws_api_gateway_resource.token_proxy.path
   s3_bucket        = var.s3_bucket
   aws_region       = var.aws_region
 

@@ -14,7 +14,7 @@ echo "Version: $VERSION"
 
 echo "Updating alias..."
 
-aws update-alias \
+aws lambda update-alias \
     --function-name "$NAME" \
     --name "$STAGE" \
     --function-version "$VERSION"

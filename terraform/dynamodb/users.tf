@@ -9,12 +9,4 @@ resource "aws_dynamodb_table" "users-table" {
     name = "userId"
     type = "S"
   }
-
-  global_secondary_index {
-    name            = "userId"
-    hash_key        = "userId"
-    write_capacity  = 10
-    read_capacity   = 10
-    projection_type = "KEYS_ONLY"
-  }
 }

@@ -9,12 +9,4 @@ resource "aws_dynamodb_table" "clients-table" {
     name = "clientId"
     type = "S"
   }
-
-  global_secondary_index {
-    name            = "clientId"
-    hash_key        = "clientId"
-    write_capacity  = 10
-    read_capacity   = 10
-    projection_type = "KEYS_ONLY"
-  }
 }
